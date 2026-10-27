@@ -2,245 +2,403 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Time | وقتي</title>
-<meta name="description" content="Free daily planner that schedules your tasks automatically. مخطط يومي مجاني يرتب مهامك تلقائياً.">
+<meta name="description" content="Free daily planner. مخطط يومي مجاني يرتب مهامك ويذكرك بها.">
+<meta name="theme-color" content="#4f46e5">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icon.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#f5f6fa;--card:#fff;--ink:#1b1f3b;--mut:#6b7090;--pri:#4f46e5;--pri2:#7c3aed;--ok:#16a34a;--hi:#ef4444;--md:#f59e0b;--lo:#22c55e;--bd:#e4e6f0}
-:root[data-theme=dark]{--bg:#0f1226;--card:#181c3a;--ink:#eef0ff;--mut:#9aa0c8;--bd:#262b52}
-*{box-sizing:border-box}
-body{margin:0;font-family:Cairo,system-ui,sans-serif;background:var(--bg);color:var(--ink);min-height:100vh}
-header{background:linear-gradient(135deg,var(--pri),var(--pri2));color:#fff;padding:18px 16px}
-.wrap{max-width:880px;margin:0 auto;padding:0 16px}
-header .wrap{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:0}
-h1{margin:0;font-size:1.5rem;font-weight:800}
-.tools button{background:rgba(255,255,255,.18);color:#fff;border:0;border-radius:10px;padding:8px 12px;font:inherit;cursor:pointer;margin-inline-start:6px}
-main{padding:18px 0 60px}
-.card{background:var(--card);border:1px solid var(--bd);border-radius:16px;padding:16px;margin-bottom:16px}
-.card h2{margin:0 0 12px;font-size:1.1rem}
-.row{display:flex;flex-wrap:wrap;gap:10px}
-input,select{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--bd);border-radius:10px;padding:10px 12px}
-#title{flex:1 1 220px}
-#mins{width:100px}
-button.pri{background:var(--pri);color:#fff;border:0;border-radius:10px;padding:10px 18px;font:inherit;font-weight:600;cursor:pointer}
-button.ghost{background:transparent;border:1px solid var(--bd);color:var(--ink);border-radius:10px;padding:10px 14px;font:inherit;cursor:pointer}
-.settings label{display:flex;flex-direction:column;font-size:.85rem;color:var(--mut);gap:4px}
-.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;text-align:center}
-.stats b{display:block;font-size:1.5rem}
-.stats span{color:var(--mut);font-size:.85rem}
-.bar{height:10px;background:var(--bg);border-radius:99px;overflow:hidden;margin-top:12px}
-.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--pri),var(--pri2));width:0;transition:width .3s}
-.task{display:flex;align-items:center;gap:12px;padding:12px;border:1px solid var(--bd);border-radius:12px;margin-bottom:8px;border-inline-start:6px solid var(--md);background:var(--card)}
-.task.high{border-inline-start-color:var(--hi)}.task.low{border-inline-start-color:var(--lo)}
-.task.now{box-shadow:0 0 0 2px var(--pri)}
-.task.done .t{text-decoration:line-through;opacity:.5}
-.time{min-width:112px;color:var(--pri);font-weight:800;font-size:.9rem;direction:ltr;text-align:center}
-.t{flex:1;font-weight:600}
-.t small{display:block;color:var(--mut);font-weight:400}
-.task button{background:none;border:0;cursor:pointer;font-size:1.1rem;color:var(--mut)}
-.brk{padding:4px 12px;color:var(--mut);font-size:.8rem;text-align:center}
-.empty{text-align:center;color:var(--mut);padding:24px}
-.timer{text-align:center}
-.timer .clock{font-size:3rem;font-weight:800;direction:ltr}
-.timer .row{justify-content:center}
-.warn{color:var(--hi);font-size:.85rem;margin-top:8px}
-footer{text-align:center;color:var(--mut);font-size:.8rem;padding:20px}
-@media(max-width:560px){.time{min-width:84px;font-size:.8rem}}
+:root{--bg:#f4f5fb;--card:#fff;--ink:#1b1f3b;--mut:#6b7090;--pri:#4f46e5;--pri2:#7c3aed;--ok:#16a34a;--star:#f59e0b;--bd:#e4e6f0;--sh:0 6px 20px rgba(40,40,100,.08)}
+:root[data-theme=dark]{--bg:#0f1226;--card:#181c3a;--ink:#eef0ff;--mut:#9aa0c8;--bd:#262b52;--sh:none}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;font-family:Cairo,system-ui,sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;font-size:16px;line-height:1.5}
+.wrap{max-width:640px;margin:0 auto;padding:0 14px}
+header{padding:14px 0 6px}
+header .wrap{display:flex;align-items:center;justify-content:space-between}
+h1{margin:0;font-size:1.6rem;font-weight:800;background:linear-gradient(135deg,var(--pri),var(--pri2));-webkit-background-clip:text;background-clip:text;color:transparent}
+.icons button{background:var(--card);border:1px solid var(--bd);color:var(--ink);width:42px;height:42px;border-radius:12px;font-size:1.05rem;cursor:pointer;margin-inline-start:6px;font-family:inherit}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:18px;padding:16px;margin:12px 0;box-shadow:var(--sh)}
+h2{margin:0 0 10px;font-size:1rem;color:var(--mut);font-weight:600}
+button{font-family:inherit;cursor:pointer}
+/* hero */
+.hero{background:linear-gradient(135deg,var(--pri),var(--pri2));color:#fff;border:0;text-align:center;padding:22px 16px}
+.hero .lbl{opacity:.85;font-size:.85rem;font-weight:600}
+.hero .big{font-size:1.5rem;font-weight:800;margin:6px 0 2px;word-break:break-word}
+.hero .sub{opacity:.9;font-size:.95rem}
+.hero .clock{font-size:3.2rem;font-weight:800;direction:ltr;margin:8px 0 0;letter-spacing:1px}
+.hero .acts{display:flex;gap:10px;justify-content:center;margin-top:14px;flex-wrap:wrap}
+.hero button{border:0;border-radius:14px;padding:13px 22px;font-size:1.05rem;font-weight:700;min-width:120px}
+.hero .go{background:#fff;color:var(--pri)}
+.hero .ok{background:rgba(255,255,255,.2);color:#fff}
+.hero.empty-h{background:var(--card);color:var(--ink);border:1px dashed var(--bd)}
+.hero.empty-h .sub{color:var(--mut)}
+/* add */
+.addrow{display:flex;gap:8px}
+#title{flex:1;min-width:0;font:inherit;font-size:1.05rem;padding:13px 14px;border-radius:14px;border:1.5px solid var(--bd);background:var(--bg);color:var(--ink)}
+#title:focus{outline:2px solid var(--pri);border-color:transparent}
+.sq{width:50px;border-radius:14px;border:1.5px solid var(--bd);background:var(--bg);color:var(--ink);font-size:1.15rem}
+.sq.on{background:var(--star);border-color:var(--star);color:#fff}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}
+.chip{border:1.5px solid var(--bd);background:var(--bg);color:var(--ink);border-radius:99px;padding:8px 14px;font-size:.92rem;font-weight:600}
+.chip.on{background:var(--pri);border-color:var(--pri);color:#fff}
+.remindrow{display:none;align-items:center;gap:8px;margin-bottom:12px;color:var(--mut);font-size:.9rem}
+.remindrow.show{display:flex}
+.remindrow input{font:inherit;padding:8px 10px;border-radius:10px;border:1.5px solid var(--bd);background:var(--bg);color:var(--ink)}
+.addbtn{width:100%;border:0;border-radius:14px;padding:14px;background:var(--pri);color:#fff;font-size:1.05rem;font-weight:700}
+/* list */
+.row{display:flex;align-items:center;gap:10px;padding:11px 4px;border-bottom:1px solid var(--bd)}
+.row:last-child{border-bottom:0}
+.row input[type=checkbox]{width:24px;height:24px;accent-color:var(--ok);flex:none}
+.row .tt{flex:1;min-width:0}
+.row .tt b{display:block;font-weight:600;word-break:break-word}
+.row .tt small{color:var(--mut)}
+.row .tm{direction:ltr;color:var(--pri);font-weight:700;font-size:.85rem;flex:none;text-align:end}
+.row .x{background:none;border:0;color:var(--mut);font-size:1.1rem;padding:6px}
+.row.done b{text-decoration:line-through;opacity:.5}
+.star{color:var(--star)}
+.note{color:var(--mut);font-size:.88rem;text-align:center;padding:10px 0}
+.over{color:#dc2626;font-size:.88rem;margin-top:8px}
+details summary{cursor:pointer;color:var(--mut);font-weight:600;list-style:none}
+details summary::-webkit-details-marker{display:none}
+/* banner + settings */
+.banner{background:var(--card);border:1px solid var(--pri);border-radius:14px;padding:12px 14px;margin:10px 0;display:flex;gap:10px;align-items:center;justify-content:space-between;font-size:.9rem}
+.banner button{background:var(--pri);color:#fff;border:0;border-radius:10px;padding:9px 14px;font-weight:700;white-space:nowrap}
+.set{display:none}.set.show{display:block}
+.grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.grid label{display:flex;flex-direction:column;font-size:.82rem;color:var(--mut);gap:4px}
+.grid input{font:inherit;padding:9px;border-radius:10px;border:1.5px solid var(--bd);background:var(--bg);color:var(--ink);width:100%}
+.btnrow{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.ghost{border:1.5px solid var(--bd);background:transparent;color:var(--ink);border-radius:12px;padding:10px 14px;font-weight:600}
+.hint{color:var(--mut);font-size:.82rem;margin-top:10px}
+/* toasts */
+#toasts{position:fixed;inset-inline:0;bottom:calc(14px + env(safe-area-inset-bottom));display:flex;flex-direction:column;align-items:center;gap:8px;pointer-events:none;z-index:50;padding:0 12px}
+.toast{pointer-events:auto;background:#1b1f3b;color:#fff;border-radius:14px;padding:12px 16px;font-size:.95rem;box-shadow:0 8px 24px rgba(0,0,0,.3);display:flex;gap:14px;align-items:center;max-width:460px;animation:up .2s}
+.toast.alert{background:var(--pri);font-weight:700}
+.toast button{background:none;border:0;color:#fbbf24;font-weight:800;font-size:.95rem}
+@keyframes up{from{transform:translateY(12px);opacity:0}to{transform:none;opacity:1}}
+footer{text-align:center;color:var(--mut);font-size:.78rem;padding:18px 0 80px}
 </style>
 </head>
 <body>
 <header><div class="wrap">
   <h1 id="appName">وقتي</h1>
-  <div class="tools"><button id="btnLang">EN</button><button id="btnTheme">🌙</button></div>
+  <div class="icons"><button id="bLang">EN</button><button id="bTheme">🌙</button><button id="bSet" aria-label="settings">⚙️</button></div>
 </div></header>
 
 <main class="wrap">
+  <div id="banner"></div>
+  <section class="card hero" id="hero"></section>
+
   <section class="card">
-    <h2 data-i="add">أضف مهمة</h2>
-    <form id="form" class="row">
-      <input id="title" required data-ph="ph_title" autocomplete="off">
-      <input id="mins" type="number" min="5" max="480" step="5" value="30" aria-label="min">
-      <select id="prio">
-        <option value="high" data-i="high">مهم جداً</option>
-        <option value="mid" selected data-i="mid">عادي</option>
-        <option value="low" data-i="low">خفيف</option>
-      </select>
-      <button class="pri" type="submit" data-i="addBtn">إضافة</button>
-      <button class="ghost" type="button" id="btnVoice" title="Voice">🎤</button>
+    <h2 id="hAdd"></h2>
+    <form id="form" autocomplete="off">
+      <div class="addrow">
+        <input id="title" required>
+        <button type="button" class="sq" id="bVoice" aria-label="mic">🎤</button>
+        <button type="button" class="sq" id="bStar" aria-label="important">☆</button>
+      </div>
+      <div class="chips" id="chips"></div>
+      <div class="chips"><button type="button" class="chip" id="bRemind"></button></div>
+      <div class="remindrow" id="remindRow"><span id="remindLbl"></span><input type="time" id="remind"></div>
+      <button class="addbtn" type="submit" id="bAdd"></button>
     </form>
-    <div id="voiceMsg" class="warn" role="status"></div>
-  </section>
-
-  <section class="card settings">
-    <div class="row">
-      <label><span data-i="start">بداية اليوم</span><input type="time" id="start" value="08:00"></label>
-      <label><span data-i="end">نهاية اليوم</span><input type="time" id="end" value="22:00"></label>
-      <label><span data-i="brk">استراحة بين المهام (دقيقة)</span><input type="number" id="brk" min="0" max="60" step="5" value="10"></label>
-      <label><span data-i="sortBy">الترتيب</span>
-        <select id="sort"><option value="prio" data-i="byPrio">حسب الأهمية</option><option value="order" data-i="byOrder">حسب الإضافة</option><option value="short" data-i="byShort">الأقصر أولاً</option></select>
-      </label>
-    </div>
   </section>
 
   <section class="card">
-    <div class="stats">
-      <div><b id="sDone">0</b><span data-i="done">منجزة</span></div>
-      <div><b id="sLeft">0</b><span data-i="left">متبقية</span></div>
-      <div><b id="sHours">0</b><span data-i="hours">ساعات مجدولة</span></div>
-    </div>
-    <div class="bar"><i id="prog"></i></div>
-  </section>
-
-  <section class="card">
-    <h2 data-i="plan">خطة يومك</h2>
+    <h2 id="hNext"></h2>
     <div id="list"></div>
-    <div id="warn" class="warn"></div>
-    <div class="row" style="margin-top:10px">
-      <button class="ghost" id="btnClear" data-i="clearDone">حذف المنجزة</button>
-      <button class="ghost" id="btnReset" data-i="reset">يوم جديد</button>
-    </div>
+    <div id="over" class="over"></div>
   </section>
 
-  <section class="card timer">
-    <h2 data-i="focus">وضع التركيز</h2>
-    <div class="clock" id="clock">25:00</div>
-    <div id="focusFor" style="color:var(--mut);min-height:1.5em"></div>
-    <div class="row" style="margin-top:10px">
-      <button class="pri" id="tStart" data-i="startT">ابدأ</button>
-      <button class="ghost" id="tPause" data-i="pause">إيقاف مؤقت</button>
-      <button class="ghost" id="t25">25</button>
-      <button class="ghost" id="t50">50</button>
+  <details class="card" id="doneBox"><summary id="doneSum"></summary><div id="doneList"></div></details>
+
+  <section class="card set" id="set">
+    <h2 id="hSet"></h2>
+    <div class="grid">
+      <label><span id="lStart"></span><input type="time" id="start"></label>
+      <label><span id="lEnd"></span><input type="time" id="end"></label>
+      <label><span id="lBrk"></span><input type="number" id="brk" min="0" max="60" step="5"></label>
     </div>
+    <div class="btnrow">
+      <button class="ghost" id="bNotif"></button>
+      <button class="ghost" id="bClear"></button>
+      <button class="ghost" id="bReset"></button>
+    </div>
+    <div class="hint" id="hintInstall"></div>
   </section>
 </main>
-<footer data-i="foot">بياناتك محفوظة في متصفحك فقط ولا تُرسل لأي مكان.</footer>
+<footer id="foot"></footer>
+<div id="toasts" aria-live="polite"></div>
 
 <script>
 const I18={
-ar:{app:"وقتي",add:"أضف مهمة",ph_title:"شنو تبي تسوي؟",high:"مهم جداً",mid:"عادي",low:"خفيف",addBtn:"إضافة",start:"بداية اليوم",end:"نهاية اليوم",brk:"استراحة بين المهام (دقيقة)",sortBy:"الترتيب",byPrio:"حسب الأهمية",byOrder:"حسب الإضافة",byShort:"الأقصر أولاً",done:"منجزة",left:"متبقية",hours:"ساعات مجدولة",plan:"خطة يومك",clearDone:"حذف المنجزة",reset:"يوم جديد",focus:"وضع التركيز",startT:"ابدأ",pause:"إيقاف مؤقت",foot:"بياناتك محفوظة في متصفحك فقط ولا تُرسل لأي مكان.",empty:"ما عندك مهام. أضف أول مهمة وأرتب لك يومك.",min:"د",overflow:"المهام التالية ما تكفيها ساعات اليوم، قلل المدة أو وسّع الوقت: ",breakTxt:"استراحة",focusOn:"تركيز على: ",doneMsg:"انتهى الوقت! خذ استراحة.",confirmReset:"تمسح كل المهام وتبدأ يوم جديد؟",novoice:"المتصفح هذا ما يدعم المايك. افتح الموقع من كروم (أندرويد) أو سفاري (آيفون) مباشرة، مو من داخل تطبيق مثل انستقرام أو واتساب.",micDenied:"المايك ممنوع. فعّل إذن الميكروفون للموقع من إعدادات المتصفح وجرب مرة ثانية.",noSpeech:"ما سمعت صوت. اضغط المايك وتكلم بعدها.",micNet:"الإدخال الصوتي يحتاج إنترنت. تأكد من اتصالك.",micErr:"تعذر تشغيل المايك. جرب مرة ثانية.",lang:"EN",listening:"أسمعك... تكلم الحين"},
-en:{app:"Time",add:"Add a task",ph_title:"What do you need to do?",high:"High",mid:"Normal",low:"Light",addBtn:"Add",start:"Day starts",end:"Day ends",brk:"Break between tasks (min)",sortBy:"Order",byPrio:"By priority",byOrder:"By added",byShort:"Shortest first",done:"Done",left:"Left",hours:"Hours planned",plan:"Your day plan",clearDone:"Clear done",reset:"New day",focus:"Focus mode",startT:"Start",pause:"Pause",foot:"Your data stays in your browser only. Nothing is sent anywhere.",empty:"No tasks yet. Add your first one and I'll plan your day.",min:"m",overflow:"Not enough hours left in your day for: ",breakTxt:"Break",focusOn:"Focusing on: ",doneMsg:"Time's up! Take a break.",confirmReset:"Delete all tasks and start a new day?",novoice:"This browser doesn't support the mic. Open the site directly in Chrome (Android) or Safari (iPhone), not inside an app like Instagram or WhatsApp.",micDenied:"Mic is blocked. Allow microphone access for this site in browser settings and try again.",noSpeech:"I didn't hear anything. Tap the mic and then speak.",micNet:"Voice input needs an internet connection.",micErr:"Couldn't start the mic. Please try again.",lang:"AR",listening:"Listening... speak now"}
+ar:{app:"وقتي",title_ph:"شنو تبي تسوي؟",hAdd:"أضف مهمة",bAdd:"إضافة المهمة",star:"مهمة مهمة جداً",mins:"د",remindBtn:"⏰ ذكرني بوقت محدد",remindLbl:"نبهني الساعة:",
+hNext:"المهام القادمة",done:"المنجزة",hSet:"الإعدادات",lStart:"بداية اليوم",lEnd:"نهاية اليوم",lBrk:"استراحة (د)",
+now:"الحين",next:"التالية",noTasks:"ما عندك مهام الحين",noTasksSub:"اكتب أول مهمة تحت وأنا أرتب لك اليوم.",
+go:"▶ ابدأ",pause:"⏸ إيقاف",resume:"▶ كمل",finish:"✓ خلصت",
+emptyList:"ما فيه مهام ثانية.",doneNone:"ما أنجزت شي لسا.",
+notifOn:"🔔 التنبيهات: مفعّلة",notifOff:"🔔 فعّل التنبيهات",notifBlocked:"🔕 التنبيهات ممنوعة من المتصفح",notifNA:"🔕 التنبيهات غير مدعومة هنا",
+banner:"فعّل التنبيهات عشان أنبهك لما يحين وقت مهمتك أو ينتهي المؤقت.",bannerBtn:"تفعيل",
+clearDone:"حذف المنجزة",reset:"يوم جديد",
+hintInstall:"لتنبيهات أفضل على الجوال: أضف الموقع للشاشة الرئيسية (من قائمة المتصفح). ملاحظة: المتصفح ما يقدر ينبهك والموقع مغلق تماماً.",
+foot:"بياناتك محفوظة في متصفحك فقط ولا تُرسل لأي مكان.",
+added:"انضافت المهمة",startsAt:"تبدأ",undo:"تراجع",deleted:"انحذفت المهمة",nice:"أحسنت! ✓",
+cleared:"تم حذف المنجزة",resetDone:"بدأت يوم جديد",
+timeUp:"انتهى الوقت: ",itsTime:"حان وقت: ",restBreak:"خذ استراحة قصيرة 🙂",
+overflow:"ما يكفي وقت اليوم لهذي المهام: ",
+novoice:"المتصفح هذا ما يدعم المايك. افتح الموقع من كروم (أندرويد) أو سفاري (آيفون) مباشرة، مو من داخل تطبيق مثل انستقرام أو واتساب.",
+micDenied:"المايك ممنوع. فعّل إذن الميكروفون للموقع من إعدادات المتصفح.",noSpeech:"ما سمعت صوت. اضغط المايك وتكلم.",micNet:"الإدخال الصوتي يحتاج إنترنت.",micErr:"تعذر تشغيل المايك. جرب مرة ثانية.",listening:"أسمعك... تكلم الحين",
+notifTestOk:"تم التفعيل. راح تصلك التنبيهات.",lang:"EN",min:"دقيقة"},
+en:{app:"Time",title_ph:"What do you need to do?",hAdd:"Add a task",bAdd:"Add task",star:"Mark as important",mins:"m",remindBtn:"⏰ Remind me at a time",remindLbl:"Alert me at:",
+hNext:"Up next",done:"Done",hSet:"Settings",lStart:"Day starts",lEnd:"Day ends",lBrk:"Break (m)",
+now:"Now",next:"Next",noTasks:"No tasks right now",noTasksSub:"Type your first task below and I'll plan your day.",
+go:"▶ Start",pause:"⏸ Pause",resume:"▶ Resume",finish:"✓ Done",
+emptyList:"No other tasks.",doneNone:"Nothing done yet.",
+notifOn:"🔔 Alerts: on",notifOff:"🔔 Turn on alerts",notifBlocked:"🔕 Alerts blocked by browser",notifNA:"🔕 Alerts not supported here",
+banner:"Turn on alerts so I can notify you when a task is due or the timer ends.",bannerBtn:"Enable",
+clearDone:"Clear done",reset:"New day",
+hintInstall:"For better alerts on mobile: add this site to your home screen (browser menu). Note: browsers can't alert you when the site is fully closed.",
+foot:"Your data stays in your browser only. Nothing is sent anywhere.",
+added:"Task added",startsAt:"starts",undo:"Undo",deleted:"Task deleted",nice:"Nice work! ✓",
+cleared:"Done tasks cleared",resetDone:"New day started",
+timeUp:"Time's up: ",itsTime:"It's time: ",restBreak:"Take a short break 🙂",
+overflow:"Not enough time today for: ",
+novoice:"This browser doesn't support the mic. Open the site directly in Chrome (Android) or Safari (iPhone), not inside an app like Instagram or WhatsApp.",
+micDenied:"Mic is blocked. Allow microphone access for this site in browser settings.",noSpeech:"I didn't hear anything. Tap the mic and speak.",micNet:"Voice input needs internet.",micErr:"Couldn't start the mic. Try again.",listening:"Listening... speak now",
+notifTestOk:"Enabled. You'll get your alerts.",lang:"AR",min:"min"}
 };
 const $=id=>document.getElementById(id);
-const S=JSON.parse(localStorage.getItem("time.v1")||"null")||{lang:(navigator.language||"ar").startsWith("en")?"en":"ar",theme:"light",tasks:[],start:"08:00",end:"22:00",brk:10,sort:"prio"};
-const save=()=>localStorage.setItem("time.v1",JSON.stringify(S));
-const t=k=>I18[S.lang][k];
-const toMin=s=>{const[a,b]=s.split(":").map(Number);return a*60+b};
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const todayStr=()=>{const d=new Date();return d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate()};
+const toMin=s=>{const[a,b]=(s||"0:0").split(":").map(Number);return a*60+b};
 const fmt=m=>{m=Math.round(m);return String(Math.floor(m/60)%24).padStart(2,"0")+":"+String(m%60).padStart(2,"0")};
-const rank={high:0,mid:1,low:2};
-let focusTask=null;
+const nowMin=()=>{const d=new Date();return d.getHours()*60+d.getMinutes()};
 
-function applyLang(){
-  document.documentElement.lang=S.lang;document.documentElement.dir=S.lang==="ar"?"rtl":"ltr";
-  $("appName").textContent=t("app");document.title=S.lang==="ar"?"وقتي | مخطط يومي مجاني":"Time | Free Daily Planner";
-  document.querySelectorAll("[data-i]").forEach(e=>e.textContent=t(e.dataset.i));
-  document.querySelectorAll("[data-ph]").forEach(e=>e.placeholder=t(e.dataset.ph));
-  $("btnLang").textContent=t("lang");
-  document.documentElement.dataset.theme=S.theme;$("btnTheme").textContent=S.theme==="dark"?"☀️":"🌙";
-  render();
-}
-function schedule(){
-  let items=S.tasks.map((x,i)=>({...x,i}));
-  if(S.sort==="prio")items.sort((a,b)=>a.done-b.done||rank[a.prio]-rank[b.prio]||a.i-b.i);
-  else if(S.sort==="short")items.sort((a,b)=>a.done-b.done||a.mins-b.mins);
-  else items.sort((a,b)=>a.done-b.done||a.i-b.i);
-  let cur=toMin(S.start);const end=toMin(S.end);const over=[];
-  items.forEach(x=>{
-    if(x.done){x.slot=null;return}
-    x.s=cur;x.e=cur+x.mins;
-    if(x.e>end)over.push(x.title);
-    cur=x.e+Number(S.brk);
-  });
-  return{items,over};
-}
-function render(){
-  S.start=$("start").value||S.start;S.end=$("end").value||S.end;
-  const{items,over}=schedule();const list=$("list");list.innerHTML="";
-  if(!items.length){list.innerHTML=`<div class="empty">${t("empty")}</div>`}
-  const now=new Date();const nm=now.getHours()*60+now.getMinutes();
-  let first=true;
-  items.forEach((x,idx)=>{
-    if(idx>0&&!x.done&&!items[idx-1].done&&S.brk>0){const b=document.createElement("div");b.className="brk";b.textContent=`☕ ${t("breakTxt")} ${S.brk}${t("min")}`;list.appendChild(b)}
-    const d=document.createElement("div");
-    const isNow=!x.done&&x.s<=nm&&nm<x.e;
-    d.className=`task ${x.prio==="mid"?"":x.prio} ${x.done?"done":""} ${isNow?"now":""}`;
-    d.innerHTML=`<input type="checkbox" ${x.done?"checked":""} aria-label="done">
-      <div class="time">${x.done?"✓":fmt(x.s)+" - "+fmt(x.e)}</div>
-      <div class="t"></div>
-      <button title="focus">▶</button><button title="delete">✕</button>`;
-    const tt=d.querySelector(".t");tt.textContent=x.title;
-    const sm=document.createElement("small");sm.textContent=`${x.mins} ${t("min")}`;tt.appendChild(sm);
-    const[cb,,,bf,bd]=[d.children[0],0,0,d.children[3],d.children[4]];
-    cb.onchange=()=>{S.tasks[x.i].done=cb.checked;save();render()};
-    bf.onclick=()=>{focusTask=x;setClock(x.mins*60);$("focusFor").textContent=t("focusOn")+x.title;window.scrollTo({top:document.body.scrollHeight,behavior:"smooth"})};
-    bd.onclick=()=>{S.tasks.splice(x.i,1);save();render()};
-    list.appendChild(d);
-  });
-  $("warn").textContent=over.length?t("overflow")+over.join("، "):"";
-  const dn=S.tasks.filter(x=>x.done).length,tot=S.tasks.length;
-  $("sDone").textContent=dn;$("sLeft").textContent=tot-dn;
-  $("sHours").textContent=(S.tasks.filter(x=>!x.done).reduce((a,b)=>a+b.mins,0)/60).toFixed(1);
-  $("prog").style.width=(tot?dn/tot*100:0)+"%";
-  save();
-}
-$("form").onsubmit=e=>{
-  e.preventDefault();
-  const title=$("title").value.trim();if(!title)return;
-  S.tasks.push({title,mins:Math.max(5,Number($("mins").value)||30),prio:$("prio").value,done:false});
-  $("title").value="";$("title").focus();render();
-};
-["start","end","brk","sort"].forEach(id=>{$(id).value=S[id];$(id).onchange=()=>{S[id]=id==="brk"?Number($(id).value)||0:$(id).value;render()}});
-$("btnLang").onclick=()=>{S.lang=S.lang==="ar"?"en":"ar";applyLang()};
-$("btnTheme").onclick=()=>{S.theme=S.theme==="dark"?"light":"dark";applyLang()};
-$("btnClear").onclick=()=>{S.tasks=S.tasks.filter(x=>!x.done);render()};
-$("btnReset").onclick=()=>{if(confirm(t("confirmReset"))){S.tasks=[];render()}};
-let rec=null;
-function voiceMsg(k){$("voiceMsg").textContent=k?t(k):""}
-$("btnVoice").onclick=async()=>{
-  const R=window.SpeechRecognition||window.webkitSpeechRecognition;
-  if(!R){voiceMsg("novoice");return}
-  if(rec){try{rec.stop()}catch(_){}return}
-  /* Ask for mic permission explicitly first (needed on many phones) */
+/* ---------- state ---------- */
+function load(){
+  const def={lang:(navigator.language||"ar").startsWith("en")?"en":"ar",theme:"light",tasks:[],start:"08:00",end:"22:00",brk:5,timer:null,notif:true,bannerOff:false};
   try{
-    if(navigator.mediaDevices&&navigator.mediaDevices.getUserMedia){
-      const st=await navigator.mediaDevices.getUserMedia({audio:true});
-      st.getTracks().forEach(x=>x.stop());
-    }
-  }catch(_){voiceMsg("micDenied");return}
-  const langs=S.lang==="ar"?["ar-SA","ar-KW","ar"]:["en-US"];
-  let tryIdx=0,gotResult=false;
-  const start=()=>{
-    const r=new R();rec=r;
-    r.lang=langs[tryIdx];r.interimResults=true;r.continuous=false;r.maxAlternatives=1;
-    r.onstart=()=>{voiceMsg("listening");$("btnVoice").textContent="⏹"};
-    r.onresult=e=>{
-      gotResult=true;let txt="";
-      for(let i=0;i<e.results.length;i++)txt+=e.results[i][0].transcript;
-      $("title").value=txt;
+    let s=JSON.parse(localStorage.getItem("time.v2")||"null");
+    if(!s){const o=JSON.parse(localStorage.getItem("time.v1")||"null");
+      if(o){s={...def,lang:o.lang||def.lang,theme:o.theme||"light",start:o.start||def.start,end:o.end||def.end,brk:o.brk??5,
+        tasks:(o.tasks||[]).map(x=>({id:uid(),title:x.title,mins:x.mins,star:x.prio==="high",remind:"",done:!!x.done}))}}}
+    return {...def,...(s||{})};
+  }catch(_){return def}
+}
+const S=load();
+const save=()=>{try{localStorage.setItem("time.v2",JSON.stringify(S))}catch(_){}};
+const T=k=>I18[S.lang][k];
+let draft={mins:30,star:false,remind:""};
+
+/* ---------- toasts ---------- */
+function toast(msg,opt={}){
+  const d=document.createElement("div");d.className="toast"+(opt.alert?" alert":"");
+  const sp=document.createElement("span");sp.textContent=msg;d.appendChild(sp);
+  if(opt.label){const b=document.createElement("button");b.textContent=opt.label;b.onclick=()=>{opt.fn&&opt.fn();d.remove()};d.appendChild(b)}
+  $("toasts").appendChild(d);setTimeout(()=>d.remove(),opt.ms||(opt.alert?9000:4000));
+}
+/* ---------- sound / alerts ---------- */
+let ac=null;
+function unlockAudio(){try{ac=ac||new (window.AudioContext||window.webkitAudioContext)();if(ac.state==="suspended")ac.resume()}catch(_){}}
+document.addEventListener("pointerdown",unlockAudio,{once:true});
+function beep(){
+  try{unlockAudio();if(!ac)return;[0,.25,.5].forEach(t=>{const o=ac.createOscillator(),g=ac.createGain();o.frequency.value=880;o.connect(g);g.connect(ac.destination);
+    g.gain.setValueAtTime(.0001,ac.currentTime+t);g.gain.exponentialRampToValueAtTime(.3,ac.currentTime+t+.02);g.gain.exponentialRampToValueAtTime(.0001,ac.currentTime+t+.2);o.start(ac.currentTime+t);o.stop(ac.currentTime+t+.22)})}catch(_){}
+}
+function notifySupported(){return typeof Notification!=="undefined"}
+function alertUser(title,body){
+  toast(title+(body?" "+body:""),{alert:true});beep();
+  try{navigator.vibrate&&navigator.vibrate([200,100,200])}catch(_){}
+  if(S.notif&&notifySupported()&&Notification.permission==="granted"){
+    const opts={body:body||"",icon:"icon.svg",tag:"time-"+Date.now(),dir:document.dir};
+    if(navigator.serviceWorker&&navigator.serviceWorker.ready){navigator.serviceWorker.ready.then(r=>r.showNotification(title,opts)).catch(()=>{try{new Notification(title,opts)}catch(_){}})}
+    else{try{new Notification(title,opts)}catch(_){}}
+  }
+}
+async function askNotif(){
+  if(!notifySupported()){toast(T("notifNA"));return}
+  try{const p=await Notification.requestPermission();
+    if(p==="granted"){S.notif=true;save();toast(T("notifTestOk"))}
+  }catch(_){}
+  renderAll();
+}
+
+/* ---------- planning ---------- */
+function plan(){
+  const u=S.tasks.map((x,i)=>({...x,i})).filter(x=>!x.done).sort((a,b)=>(b.star-a.star)||(a.i-b.i));
+  const ceil5=Math.ceil(nowMin()/5)*5;
+  let cur=Math.max(toMin(S.start),ceil5);const end=toMin(S.end);const over=[];
+  u.forEach(x=>{x.s=cur;x.e=cur+x.mins;if(x.e>end)over.push(x.title);cur=x.e+Number(S.brk||0)});
+  return{u,over};
+}
+/* ---------- timer ---------- */
+function tLeft(){const t=S.timer;if(!t)return 0;return t.endAt?Math.max(0,Math.round((t.endAt-Date.now())/1000)):t.left}
+const clockTxt=s=>String(Math.floor(s/60)).padStart(2,"0")+":"+String(s%60).padStart(2,"0");
+function startTimer(task){
+  unlockAudio();
+  if(S.timer&&S.timer.id===task.id){S.timer={id:task.id,endAt:Date.now()+S.timer.left*1000}}
+  else S.timer={id:task.id,endAt:Date.now()+task.mins*60000};
+  save();renderHero();
+}
+function pauseTimer(){if(!S.timer||!S.timer.endAt)return;S.timer={id:S.timer.id,left:tLeft()};save();renderHero()}
+function completeTask(id,silent){
+  const t=S.tasks.find(x=>x.id===id);if(!t)return;
+  const wasTimer=S.timer&&S.timer.id===id?S.timer:null;
+  t.done=true;t.doneAt=Date.now();if(wasTimer)S.timer=null;save();renderAll();
+  if(!silent)toast(T("nice"),{label:T("undo"),fn:()=>{t.done=false;delete t.doneAt;save();renderAll()}});
+}
+/* ---------- render ---------- */
+function renderHero(){
+  const h=$("hero");const{u}=plan();const t=u[0];
+  if(!t){h.className="card hero empty-h";h.innerHTML=`<div class="big">${T("noTasks")}</div><div class="sub">${T("noTasksSub")}</div>`;return}
+  h.className="card hero";
+  const run=S.timer&&S.timer.id===t.id;const running=run&&S.timer.endAt;
+  let acts="";
+  if(running)acts=`<button class="go" data-a="pause">${T("pause")}</button>`;
+  else if(run)acts=`<button class="go" data-a="go">${T("resume")}</button>`;
+  else acts=`<button class="go" data-a="go">${T("go")}</button>`;
+  acts+=`<button class="ok" data-a="fin">${T("finish")}</button>`;
+  h.innerHTML=`<div class="lbl">${T("now")}${t.star?" ⭐":""}</div><div class="big">${esc(t.title)}</div>
+    <div class="sub">${t.mins} ${T("mins")} · ${fmt(t.s)} - ${fmt(t.e)}${t.remind?" · ⏰ "+t.remind:""}</div>
+    ${run?`<div class="clock" id="clock">${clockTxt(tLeft())}</div>`:""}
+    <div class="acts">${acts}</div>`;
+  h.querySelectorAll("[data-a]").forEach(b=>b.onclick=()=>{const a=b.dataset.a;if(a==="go")startTimer(t);else if(a==="pause")pauseTimer();else completeTask(t.id)});
+}
+function rowHtml(x,showTime){
+  return `<div class="row ${x.done?"done":""}" data-id="${x.id}"><input type="checkbox" ${x.done?"checked":""} aria-label="done">
+  <div class="tt"><b>${x.star?'<span class="star">⭐</span> ':""}${esc(x.title)}</b><small>${x.mins} ${T("mins")}${x.remind?" · ⏰ "+x.remind:""}</small></div>
+  ${showTime?`<div class="tm">${fmt(x.s)}</div>`:""}<button class="x" aria-label="delete">✕</button></div>`;
+}
+function bindRows(box){
+  box.querySelectorAll(".row").forEach(r=>{
+    const id=r.dataset.id;
+    r.querySelector("input").onchange=e=>{
+      if(e.target.checked)completeTask(id);
+      else{const t=S.tasks.find(x=>x.id===id);if(t){t.done=false;save();renderAll()}}
     };
-    r.onerror=e=>{
-      if(e.error==="language-not-supported"&&tryIdx<langs.length-1){tryIdx++;rec=null;start();return}
-      if(e.error==="not-allowed"||e.error==="service-not-allowed")voiceMsg("micDenied");
-      else if(e.error==="no-speech")voiceMsg("noSpeech");
-      else if(e.error==="network")voiceMsg("micNet");
-      else voiceMsg("micErr");
+    r.querySelector(".x").onclick=()=>{
+      const i=S.tasks.findIndex(x=>x.id===id);if(i<0)return;const[rm]=S.tasks.splice(i,1);
+      if(S.timer&&S.timer.id===id)S.timer=null;save();renderAll();
+      toast(T("deleted"),{label:T("undo"),fn:()=>{S.tasks.splice(i,0,rm);save();renderAll()}});
     };
-    r.onend=()=>{rec=null;$("btnVoice").textContent="🎤";if(gotResult)voiceMsg("")};
-    try{r.start()}catch(_){rec=null;voiceMsg("micErr")}
-  };
-  voiceMsg("");start();
+  });
+}
+function renderLists(){
+  const{u,over}=plan();const rest=u.slice(1);
+  $("list").innerHTML=rest.length?rest.map(x=>rowHtml(x,true)).join(""):`<div class="note">${T("emptyList")}</div>`;
+  bindRows($("list"));
+  $("over").textContent=over.length?T("overflow")+over.join("، "):"";
+  const d=S.tasks.filter(x=>x.done);
+  $("doneSum").textContent=`${T("done")} (${d.length})`;
+  $("doneList").innerHTML=d.length?d.map(x=>rowHtml(x,false)).join(""):`<div class="note">${T("doneNone")}</div>`;
+  bindRows($("doneList"));
+}
+function renderBanner(){
+  const b=$("banner");
+  if(S.bannerOff||!notifySupported()||Notification.permission!=="default"){b.innerHTML="";return}
+  b.innerHTML=`<div class="banner"><span>${T("banner")}</span><button id="bnOn">${T("bannerBtn")}</button></div>`;
+  $("bnOn").onclick=askNotif;
+}
+function renderStatic(){
+  document.documentElement.lang=S.lang;document.documentElement.dir=S.lang==="ar"?"rtl":"ltr";
+  document.documentElement.dataset.theme=S.theme;
+  $("appName").textContent=T("app");document.title=S.lang==="ar"?"وقتي | مخطط يومي مجاني":"Time | Free Daily Planner";
+  $("bLang").textContent=T("lang");$("bTheme").textContent=S.theme==="dark"?"☀️":"🌙";
+  $("title").placeholder=T("title_ph");$("hAdd").textContent=T("hAdd");$("bAdd").textContent=T("bAdd");
+  $("bStar").title=T("star");$("bStar").textContent=draft.star?"⭐":"☆";$("bStar").classList.toggle("on",draft.star);
+  $("bRemind").textContent=T("remindBtn");$("remindLbl").textContent=T("remindLbl");
+  $("hNext").textContent=T("hNext");$("hSet").textContent=T("hSet");
+  $("lStart").textContent=T("lStart");$("lEnd").textContent=T("lEnd");$("lBrk").textContent=T("lBrk");
+  $("bClear").textContent=T("clearDone");$("bReset").textContent=T("reset");$("hintInstall").textContent=T("hintInstall");$("foot").textContent=T("foot");
+  $("chips").innerHTML=[15,30,45,60,90].map(m=>`<button type="button" class="chip ${draft.mins===m?"on":""}" data-m="${m}">${m} ${T("mins")}</button>`).join("");
+  $("chips").querySelectorAll(".chip").forEach(c=>c.onclick=()=>{draft.mins=Number(c.dataset.m);renderStatic()});
+  let nt;
+  if(!notifySupported())nt=T("notifNA");else if(Notification.permission==="granted")nt=T("notifOn");else if(Notification.permission==="denied")nt=T("notifBlocked");else nt=T("notifOff");
+  $("bNotif").textContent=nt;
+}
+function renderAll(){renderStatic();renderBanner();renderHero();renderLists()}
+
+/* ---------- events ---------- */
+$("form").onsubmit=e=>{
+  e.preventDefault();const title=$("title").value.trim();if(!title)return;
+  const t={id:uid(),title,mins:draft.mins,star:draft.star,remind:$("remindRow").classList.contains("show")?$("remind").value:"",done:false};
+  S.tasks.push(t);save();
+  $("title").value="";draft.star=false;$("remind").value="";$("remindRow").classList.remove("show");
+  renderAll();
+  const p=plan().u.find(x=>x.id===t.id);
+  toast(T("added")+(p?` · ${T("startsAt")} ${fmt(p.s)}`:""));
+  $("title").focus();
 };
-/* Focus timer */
-let left=1500,tick=null;
-function setClock(s){left=s;clearInterval(tick);tick=null;drawClock()}
-function drawClock(){$("clock").textContent=String(Math.floor(left/60)).padStart(2,"0")+":"+String(left%60).padStart(2,"0")}
-$("tStart").onclick=()=>{if(tick)return;tick=setInterval(()=>{left--;drawClock();if(left<=0){clearInterval(tick);tick=null;try{new Audio("data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAESsAACJWAAACABAAZGF0YQAAAAA=").play()}catch(_){}alert(t("doneMsg"))}},1000)};
-$("tPause").onclick=()=>{clearInterval(tick);tick=null};
-$("t25").onclick=()=>{$("focusFor").textContent="";setClock(1500)};
-$("t50").onclick=()=>{$("focusFor").textContent="";setClock(3000)};
-setInterval(()=>{if(S.tasks.length)render()},60000);
-applyLang();drawClock();
+$("bStar").onclick=()=>{draft.star=!draft.star;renderStatic()};
+$("bRemind").onclick=()=>{$("remindRow").classList.toggle("show");if($("remindRow").classList.contains("show")){$("remind").focus();if(!$("remind").value){const d=new Date(Date.now()+3600000);$("remind").value=fmt(d.getHours()*60+d.getMinutes())}}};
+$("bLang").onclick=()=>{S.lang=S.lang==="ar"?"en":"ar";save();renderAll()};
+$("bTheme").onclick=()=>{S.theme=S.theme==="dark"?"light":"dark";save();renderStatic()};
+$("bSet").onclick=()=>$("set").classList.toggle("show");
+["start","end","brk"].forEach(k=>{$(k).value=S[k];$(k).onchange=()=>{S[k]=k==="brk"?Math.max(0,Number($(k).value)||0):($(k).value||S[k]);save();renderAll()}});
+$("bNotif").onclick=()=>{
+  if(!notifySupported()){toast(T("notifNA"));return}
+  if(Notification.permission==="denied"){toast(T("notifBlocked"));return}
+  if(Notification.permission==="granted"){S.notif=!S.notif;save();toast(S.notif?T("notifOn"):T("notifBlocked").replace("🔕 ","🔕 "));renderStatic();return}
+  askNotif();
+};
+$("bClear").onclick=()=>{S.tasks=S.tasks.filter(x=>!x.done);save();renderAll();toast(T("cleared"))};
+$("bReset").onclick=()=>{const bak=S.tasks.slice(),bt=S.timer;S.tasks=[];S.timer=null;save();renderAll();toast(T("resetDone"),{label:T("undo"),fn:()=>{S.tasks=bak;S.timer=bt;save();renderAll()}})};
+
+/* ---------- voice ---------- */
+let rec=null;
+$("bVoice").onclick=async()=>{
+  const R=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(!R){toast(T("novoice"),{ms:8000});return}
+  if(rec){try{rec.stop()}catch(_){}return}
+  try{if(navigator.mediaDevices&&navigator.mediaDevices.getUserMedia){const st=await navigator.mediaDevices.getUserMedia({audio:true});st.getTracks().forEach(x=>x.stop())}}
+  catch(_){toast(T("micDenied"),{ms:7000});return}
+  const langs=S.lang==="ar"?["ar-SA","ar-KW","ar"]:["en-US"];let ti=0;
+  const go=()=>{
+    const r=new R();rec=r;r.lang=langs[ti];r.interimResults=true;r.continuous=false;
+    r.onstart=()=>{toast(T("listening"),{ms:2500});$("bVoice").textContent="⏹"};
+    r.onresult=e=>{let tx="";for(let i=0;i<e.results.length;i++)tx+=e.results[i][0].transcript;$("title").value=tx};
+    r.onerror=e=>{
+      if(e.error==="language-not-supported"&&ti<langs.length-1){ti++;rec=null;go();return}
+      if(e.error==="not-allowed"||e.error==="service-not-allowed")toast(T("micDenied"),{ms:7000});
+      else if(e.error==="no-speech")toast(T("noSpeech"));else if(e.error==="network")toast(T("micNet"));else toast(T("micErr"));
+    };
+    r.onend=()=>{rec=null;$("bVoice").textContent="🎤"};
+    try{r.start()}catch(_){rec=null;toast(T("micErr"))}
+  };go();
+};
+
+/* ---------- ticker: timer + reminders ---------- */
+let lastMin=-1;
+setInterval(()=>{
+  const c=$("clock");
+  if(S.timer){
+    if(c)c.textContent=clockTxt(tLeft());
+    if(S.timer.endAt&&tLeft()<=0){
+      const t=S.tasks.find(x=>x.id===S.timer.id);S.timer=null;save();
+      if(t)alertUser(T("timeUp")+t.title,T("restBreak"));
+      renderHero();
+    }
+  }
+  const nm=nowMin();
+  if(nm!==lastMin){
+    lastMin=nm;
+    S.tasks.forEach(t=>{
+      if(!t.done&&t.remind&&t.n!==todayStr()){
+        const rm=toMin(t.remind);
+        if(nm>=rm&&nm<rm+30){t.n=todayStr();save();alertUser(T("itsTime")+t.title,"")}
+      }
+    });
+    renderHero();renderLists();
+  }
+},1000);
+
+if("serviceWorker"in navigator&&location.protocol.startsWith("http")){navigator.serviceWorker.register("sw.js").catch(()=>{})}
+renderAll();
 </script>
 </body>
 </html>

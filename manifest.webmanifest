@@ -1,0 +1,15 @@
+{
+  "name": "Time | وقتي",
+  "short_name": "وقتي",
+  "description": "مخطط يومي مجاني يرتب مهامك ويذكرك بها",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#4f46e5",
+  "theme_color": "#4f46e5",
+  "dir": "rtl",
+  "lang": "ar",
+  "icons": [
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}
