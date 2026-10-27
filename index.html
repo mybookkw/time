@@ -1,0 +1,216 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Time | وقتي</title>
+<meta name="description" content="Free daily planner that schedules your tasks automatically. مخطط يومي مجاني يرتب مهامك تلقائياً.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f5f6fa;--card:#fff;--ink:#1b1f3b;--mut:#6b7090;--pri:#4f46e5;--pri2:#7c3aed;--ok:#16a34a;--hi:#ef4444;--md:#f59e0b;--lo:#22c55e;--bd:#e4e6f0}
+:root[data-theme=dark]{--bg:#0f1226;--card:#181c3a;--ink:#eef0ff;--mut:#9aa0c8;--bd:#262b52}
+*{box-sizing:border-box}
+body{margin:0;font-family:Cairo,system-ui,sans-serif;background:var(--bg);color:var(--ink);min-height:100vh}
+header{background:linear-gradient(135deg,var(--pri),var(--pri2));color:#fff;padding:18px 16px}
+.wrap{max-width:880px;margin:0 auto;padding:0 16px}
+header .wrap{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:0}
+h1{margin:0;font-size:1.5rem;font-weight:800}
+.tools button{background:rgba(255,255,255,.18);color:#fff;border:0;border-radius:10px;padding:8px 12px;font:inherit;cursor:pointer;margin-inline-start:6px}
+main{padding:18px 0 60px}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:16px;padding:16px;margin-bottom:16px}
+.card h2{margin:0 0 12px;font-size:1.1rem}
+.row{display:flex;flex-wrap:wrap;gap:10px}
+input,select{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--bd);border-radius:10px;padding:10px 12px}
+#title{flex:1 1 220px}
+#mins{width:100px}
+button.pri{background:var(--pri);color:#fff;border:0;border-radius:10px;padding:10px 18px;font:inherit;font-weight:600;cursor:pointer}
+button.ghost{background:transparent;border:1px solid var(--bd);color:var(--ink);border-radius:10px;padding:10px 14px;font:inherit;cursor:pointer}
+.settings label{display:flex;flex-direction:column;font-size:.85rem;color:var(--mut);gap:4px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;text-align:center}
+.stats b{display:block;font-size:1.5rem}
+.stats span{color:var(--mut);font-size:.85rem}
+.bar{height:10px;background:var(--bg);border-radius:99px;overflow:hidden;margin-top:12px}
+.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--pri),var(--pri2));width:0;transition:width .3s}
+.task{display:flex;align-items:center;gap:12px;padding:12px;border:1px solid var(--bd);border-radius:12px;margin-bottom:8px;border-inline-start:6px solid var(--md);background:var(--card)}
+.task.high{border-inline-start-color:var(--hi)}.task.low{border-inline-start-color:var(--lo)}
+.task.now{box-shadow:0 0 0 2px var(--pri)}
+.task.done .t{text-decoration:line-through;opacity:.5}
+.time{min-width:112px;color:var(--pri);font-weight:800;font-size:.9rem;direction:ltr;text-align:center}
+.t{flex:1;font-weight:600}
+.t small{display:block;color:var(--mut);font-weight:400}
+.task button{background:none;border:0;cursor:pointer;font-size:1.1rem;color:var(--mut)}
+.brk{padding:4px 12px;color:var(--mut);font-size:.8rem;text-align:center}
+.empty{text-align:center;color:var(--mut);padding:24px}
+.timer{text-align:center}
+.timer .clock{font-size:3rem;font-weight:800;direction:ltr}
+.timer .row{justify-content:center}
+.warn{color:var(--hi);font-size:.85rem;margin-top:8px}
+footer{text-align:center;color:var(--mut);font-size:.8rem;padding:20px}
+@media(max-width:560px){.time{min-width:84px;font-size:.8rem}}
+</style>
+</head>
+<body>
+<header><div class="wrap">
+  <h1 id="appName">وقتي</h1>
+  <div class="tools"><button id="btnLang">EN</button><button id="btnTheme">🌙</button></div>
+</div></header>
+
+<main class="wrap">
+  <section class="card">
+    <h2 data-i="add">أضف مهمة</h2>
+    <form id="form" class="row">
+      <input id="title" required data-ph="ph_title" autocomplete="off">
+      <input id="mins" type="number" min="5" max="480" step="5" value="30" aria-label="min">
+      <select id="prio">
+        <option value="high" data-i="high">مهم جداً</option>
+        <option value="mid" selected data-i="mid">عادي</option>
+        <option value="low" data-i="low">خفيف</option>
+      </select>
+      <button class="pri" type="submit" data-i="addBtn">إضافة</button>
+      <button class="ghost" type="button" id="btnVoice" title="Voice">🎤</button>
+    </form>
+  </section>
+
+  <section class="card settings">
+    <div class="row">
+      <label><span data-i="start">بداية اليوم</span><input type="time" id="start" value="08:00"></label>
+      <label><span data-i="end">نهاية اليوم</span><input type="time" id="end" value="22:00"></label>
+      <label><span data-i="brk">استراحة بين المهام (دقيقة)</span><input type="number" id="brk" min="0" max="60" step="5" value="10"></label>
+      <label><span data-i="sortBy">الترتيب</span>
+        <select id="sort"><option value="prio" data-i="byPrio">حسب الأهمية</option><option value="order" data-i="byOrder">حسب الإضافة</option><option value="short" data-i="byShort">الأقصر أولاً</option></select>
+      </label>
+    </div>
+  </section>
+
+  <section class="card">
+    <div class="stats">
+      <div><b id="sDone">0</b><span data-i="done">منجزة</span></div>
+      <div><b id="sLeft">0</b><span data-i="left">متبقية</span></div>
+      <div><b id="sHours">0</b><span data-i="hours">ساعات مجدولة</span></div>
+    </div>
+    <div class="bar"><i id="prog"></i></div>
+  </section>
+
+  <section class="card">
+    <h2 data-i="plan">خطة يومك</h2>
+    <div id="list"></div>
+    <div id="warn" class="warn"></div>
+    <div class="row" style="margin-top:10px">
+      <button class="ghost" id="btnClear" data-i="clearDone">حذف المنجزة</button>
+      <button class="ghost" id="btnReset" data-i="reset">يوم جديد</button>
+    </div>
+  </section>
+
+  <section class="card timer">
+    <h2 data-i="focus">وضع التركيز</h2>
+    <div class="clock" id="clock">25:00</div>
+    <div id="focusFor" style="color:var(--mut);min-height:1.5em"></div>
+    <div class="row" style="margin-top:10px">
+      <button class="pri" id="tStart" data-i="startT">ابدأ</button>
+      <button class="ghost" id="tPause" data-i="pause">إيقاف مؤقت</button>
+      <button class="ghost" id="t25">25</button>
+      <button class="ghost" id="t50">50</button>
+    </div>
+  </section>
+</main>
+<footer data-i="foot">بياناتك محفوظة في متصفحك فقط ولا تُرسل لأي مكان.</footer>
+
+<script>
+const I18={
+ar:{app:"وقتي",add:"أضف مهمة",ph_title:"شنو تبي تسوي؟",high:"مهم جداً",mid:"عادي",low:"خفيف",addBtn:"إضافة",start:"بداية اليوم",end:"نهاية اليوم",brk:"استراحة بين المهام (دقيقة)",sortBy:"الترتيب",byPrio:"حسب الأهمية",byOrder:"حسب الإضافة",byShort:"الأقصر أولاً",done:"منجزة",left:"متبقية",hours:"ساعات مجدولة",plan:"خطة يومك",clearDone:"حذف المنجزة",reset:"يوم جديد",focus:"وضع التركيز",startT:"ابدأ",pause:"إيقاف مؤقت",foot:"بياناتك محفوظة في متصفحك فقط ولا تُرسل لأي مكان.",empty:"ما عندك مهام. أضف أول مهمة وأرتب لك يومك.",min:"د",overflow:"المهام التالية ما تكفيها ساعات اليوم، قلل المدة أو وسّع الوقت: ",breakTxt:"استراحة",focusOn:"تركيز على: ",doneMsg:"انتهى الوقت! خذ استراحة.",confirmReset:"تمسح كل المهام وتبدأ يوم جديد؟",novoice:"المتصفح ما يدعم الإدخال الصوتي",lang:"EN",listening:"أسمعك..."},
+en:{app:"Time",add:"Add a task",ph_title:"What do you need to do?",high:"High",mid:"Normal",low:"Light",addBtn:"Add",start:"Day starts",end:"Day ends",brk:"Break between tasks (min)",sortBy:"Order",byPrio:"By priority",byOrder:"By added",byShort:"Shortest first",done:"Done",left:"Left",hours:"Hours planned",plan:"Your day plan",clearDone:"Clear done",reset:"New day",focus:"Focus mode",startT:"Start",pause:"Pause",foot:"Your data stays in your browser only. Nothing is sent anywhere.",empty:"No tasks yet. Add your first one and I'll plan your day.",min:"m",overflow:"Not enough hours left in your day for: ",breakTxt:"Break",focusOn:"Focusing on: ",doneMsg:"Time's up! Take a break.",confirmReset:"Delete all tasks and start a new day?",novoice:"Voice input isn't supported in this browser",lang:"AR",listening:"Listening..."}
+};
+const $=id=>document.getElementById(id);
+const S=JSON.parse(localStorage.getItem("time.v1")||"null")||{lang:(navigator.language||"ar").startsWith("en")?"en":"ar",theme:"light",tasks:[],start:"08:00",end:"22:00",brk:10,sort:"prio"};
+const save=()=>localStorage.setItem("time.v1",JSON.stringify(S));
+const t=k=>I18[S.lang][k];
+const toMin=s=>{const[a,b]=s.split(":").map(Number);return a*60+b};
+const fmt=m=>{m=Math.round(m);return String(Math.floor(m/60)%24).padStart(2,"0")+":"+String(m%60).padStart(2,"0")};
+const rank={high:0,mid:1,low:2};
+let focusTask=null;
+
+function applyLang(){
+  document.documentElement.lang=S.lang;document.documentElement.dir=S.lang==="ar"?"rtl":"ltr";
+  $("appName").textContent=t("app");document.title=S.lang==="ar"?"وقتي | مخطط يومي مجاني":"Time | Free Daily Planner";
+  document.querySelectorAll("[data-i]").forEach(e=>e.textContent=t(e.dataset.i));
+  document.querySelectorAll("[data-ph]").forEach(e=>e.placeholder=t(e.dataset.ph));
+  $("btnLang").textContent=t("lang");
+  document.documentElement.dataset.theme=S.theme;$("btnTheme").textContent=S.theme==="dark"?"☀️":"🌙";
+  render();
+}
+function schedule(){
+  let items=S.tasks.map((x,i)=>({...x,i}));
+  if(S.sort==="prio")items.sort((a,b)=>a.done-b.done||rank[a.prio]-rank[b.prio]||a.i-b.i);
+  else if(S.sort==="short")items.sort((a,b)=>a.done-b.done||a.mins-b.mins);
+  else items.sort((a,b)=>a.done-b.done||a.i-b.i);
+  let cur=toMin(S.start);const end=toMin(S.end);const over=[];
+  items.forEach(x=>{
+    if(x.done){x.slot=null;return}
+    x.s=cur;x.e=cur+x.mins;
+    if(x.e>end)over.push(x.title);
+    cur=x.e+Number(S.brk);
+  });
+  return{items,over};
+}
+function render(){
+  S.start=$("start").value||S.start;S.end=$("end").value||S.end;
+  const{items,over}=schedule();const list=$("list");list.innerHTML="";
+  if(!items.length){list.innerHTML=`<div class="empty">${t("empty")}</div>`}
+  const now=new Date();const nm=now.getHours()*60+now.getMinutes();
+  let first=true;
+  items.forEach((x,idx)=>{
+    if(idx>0&&!x.done&&!items[idx-1].done&&S.brk>0){const b=document.createElement("div");b.className="brk";b.textContent=`☕ ${t("breakTxt")} ${S.brk}${t("min")}`;list.appendChild(b)}
+    const d=document.createElement("div");
+    const isNow=!x.done&&x.s<=nm&&nm<x.e;
+    d.className=`task ${x.prio==="mid"?"":x.prio} ${x.done?"done":""} ${isNow?"now":""}`;
+    d.innerHTML=`<input type="checkbox" ${x.done?"checked":""} aria-label="done">
+      <div class="time">${x.done?"✓":fmt(x.s)+" - "+fmt(x.e)}</div>
+      <div class="t"></div>
+      <button title="focus">▶</button><button title="delete">✕</button>`;
+    const tt=d.querySelector(".t");tt.textContent=x.title;
+    const sm=document.createElement("small");sm.textContent=`${x.mins} ${t("min")}`;tt.appendChild(sm);
+    const[cb,,,bf,bd]=[d.children[0],0,0,d.children[3],d.children[4]];
+    cb.onchange=()=>{S.tasks[x.i].done=cb.checked;save();render()};
+    bf.onclick=()=>{focusTask=x;setClock(x.mins*60);$("focusFor").textContent=t("focusOn")+x.title;window.scrollTo({top:document.body.scrollHeight,behavior:"smooth"})};
+    bd.onclick=()=>{S.tasks.splice(x.i,1);save();render()};
+    list.appendChild(d);
+  });
+  $("warn").textContent=over.length?t("overflow")+over.join("، "):"";
+  const dn=S.tasks.filter(x=>x.done).length,tot=S.tasks.length;
+  $("sDone").textContent=dn;$("sLeft").textContent=tot-dn;
+  $("sHours").textContent=(S.tasks.filter(x=>!x.done).reduce((a,b)=>a+b.mins,0)/60).toFixed(1);
+  $("prog").style.width=(tot?dn/tot*100:0)+"%";
+  save();
+}
+$("form").onsubmit=e=>{
+  e.preventDefault();
+  const title=$("title").value.trim();if(!title)return;
+  S.tasks.push({title,mins:Math.max(5,Number($("mins").value)||30),prio:$("prio").value,done:false});
+  $("title").value="";$("title").focus();render();
+};
+["start","end","brk","sort"].forEach(id=>{$(id).value=S[id];$(id).onchange=()=>{S[id]=id==="brk"?Number($(id).value)||0:$(id).value;render()}});
+$("btnLang").onclick=()=>{S.lang=S.lang==="ar"?"en":"ar";applyLang()};
+$("btnTheme").onclick=()=>{S.theme=S.theme==="dark"?"light":"dark";applyLang()};
+$("btnClear").onclick=()=>{S.tasks=S.tasks.filter(x=>!x.done);render()};
+$("btnReset").onclick=()=>{if(confirm(t("confirmReset"))){S.tasks=[];render()}};
+$("btnVoice").onclick=()=>{
+  const R=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(!R){alert(t("novoice"));return}
+  const r=new R();r.lang=S.lang==="ar"?"ar-KW":"en-US";$("title").placeholder=t("listening");
+  r.onresult=e=>{$("title").value=e.results[0][0].transcript};
+  r.onend=()=>{$("title").placeholder=t("ph_title")};r.start();
+};
+/* Focus timer */
+let left=1500,tick=null;
+function setClock(s){left=s;clearInterval(tick);tick=null;drawClock()}
+function drawClock(){$("clock").textContent=String(Math.floor(left/60)).padStart(2,"0")+":"+String(left%60).padStart(2,"0")}
+$("tStart").onclick=()=>{if(tick)return;tick=setInterval(()=>{left--;drawClock();if(left<=0){clearInterval(tick);tick=null;try{new Audio("data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAESsAACJWAAACABAAZGF0YQAAAAA=").play()}catch(_){}alert(t("doneMsg"))}},1000)};
+$("tPause").onclick=()=>{clearInterval(tick);tick=null};
+$("t25").onclick=()=>{$("focusFor").textContent="";setClock(1500)};
+$("t50").onclick=()=>{$("focusFor").textContent="";setClock(3000)};
+setInterval(()=>{if(S.tasks.length)render()},60000);
+applyLang();drawClock();
+</script>
+</body>
+</html>

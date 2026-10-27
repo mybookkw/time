@@ -1,0 +1,6 @@
+services:
+  - type: web
+    name: time
+    runtime: static
+    staticPublishPath: .
+    pullRequestPreviewsEnabled: false
