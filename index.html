@@ -70,6 +70,7 @@ footer{text-align:center;color:var(--mut);font-size:.8rem;padding:20px}
       <button class="pri" type="submit" data-i="addBtn">إضافة</button>
       <button class="ghost" type="button" id="btnVoice" title="Voice">🎤</button>
     </form>
+    <div id="voiceMsg" class="warn" role="status"></div>
   </section>
 
   <section class="card settings">
@@ -118,8 +119,8 @@ footer{text-align:center;color:var(--mut);font-size:.8rem;padding:20px}
 
 <script>
 const I18={
-ar:{app:"وقتي",add:"أضف مهمة",ph_title:"شنو تبي تسوي؟",high:"مهم جداً",mid:"عادي",low:"خفيف",addBtn:"إضافة",start:"بداية اليوم",end:"نهاية اليوم",brk:"استراحة بين المهام (دقيقة)",sortBy:"الترتيب",byPrio:"حسب الأهمية",byOrder:"حسب الإضافة",byShort:"الأقصر أولاً",done:"منجزة",left:"متبقية",hours:"ساعات مجدولة",plan:"خطة يومك",clearDone:"حذف المنجزة",reset:"يوم جديد",focus:"وضع التركيز",startT:"ابدأ",pause:"إيقاف مؤقت",foot:"بياناتك محفوظة في متصفحك فقط ولا تُرسل لأي مكان.",empty:"ما عندك مهام. أضف أول مهمة وأرتب لك يومك.",min:"د",overflow:"المهام التالية ما تكفيها ساعات اليوم، قلل المدة أو وسّع الوقت: ",breakTxt:"استراحة",focusOn:"تركيز على: ",doneMsg:"انتهى الوقت! خذ استراحة.",confirmReset:"تمسح كل المهام وتبدأ يوم جديد؟",novoice:"المتصفح ما يدعم الإدخال الصوتي",lang:"EN",listening:"أسمعك..."},
-en:{app:"Time",add:"Add a task",ph_title:"What do you need to do?",high:"High",mid:"Normal",low:"Light",addBtn:"Add",start:"Day starts",end:"Day ends",brk:"Break between tasks (min)",sortBy:"Order",byPrio:"By priority",byOrder:"By added",byShort:"Shortest first",done:"Done",left:"Left",hours:"Hours planned",plan:"Your day plan",clearDone:"Clear done",reset:"New day",focus:"Focus mode",startT:"Start",pause:"Pause",foot:"Your data stays in your browser only. Nothing is sent anywhere.",empty:"No tasks yet. Add your first one and I'll plan your day.",min:"m",overflow:"Not enough hours left in your day for: ",breakTxt:"Break",focusOn:"Focusing on: ",doneMsg:"Time's up! Take a break.",confirmReset:"Delete all tasks and start a new day?",novoice:"Voice input isn't supported in this browser",lang:"AR",listening:"Listening..."}
+ar:{app:"وقتي",add:"أضف مهمة",ph_title:"شنو تبي تسوي؟",high:"مهم جداً",mid:"عادي",low:"خفيف",addBtn:"إضافة",start:"بداية اليوم",end:"نهاية اليوم",brk:"استراحة بين المهام (دقيقة)",sortBy:"الترتيب",byPrio:"حسب الأهمية",byOrder:"حسب الإضافة",byShort:"الأقصر أولاً",done:"منجزة",left:"متبقية",hours:"ساعات مجدولة",plan:"خطة يومك",clearDone:"حذف المنجزة",reset:"يوم جديد",focus:"وضع التركيز",startT:"ابدأ",pause:"إيقاف مؤقت",foot:"بياناتك محفوظة في متصفحك فقط ولا تُرسل لأي مكان.",empty:"ما عندك مهام. أضف أول مهمة وأرتب لك يومك.",min:"د",overflow:"المهام التالية ما تكفيها ساعات اليوم، قلل المدة أو وسّع الوقت: ",breakTxt:"استراحة",focusOn:"تركيز على: ",doneMsg:"انتهى الوقت! خذ استراحة.",confirmReset:"تمسح كل المهام وتبدأ يوم جديد؟",novoice:"المتصفح هذا ما يدعم المايك. افتح الموقع من كروم (أندرويد) أو سفاري (آيفون) مباشرة، مو من داخل تطبيق مثل انستقرام أو واتساب.",micDenied:"المايك ممنوع. فعّل إذن الميكروفون للموقع من إعدادات المتصفح وجرب مرة ثانية.",noSpeech:"ما سمعت صوت. اضغط المايك وتكلم بعدها.",micNet:"الإدخال الصوتي يحتاج إنترنت. تأكد من اتصالك.",micErr:"تعذر تشغيل المايك. جرب مرة ثانية.",lang:"EN",listening:"أسمعك... تكلم الحين"},
+en:{app:"Time",add:"Add a task",ph_title:"What do you need to do?",high:"High",mid:"Normal",low:"Light",addBtn:"Add",start:"Day starts",end:"Day ends",brk:"Break between tasks (min)",sortBy:"Order",byPrio:"By priority",byOrder:"By added",byShort:"Shortest first",done:"Done",left:"Left",hours:"Hours planned",plan:"Your day plan",clearDone:"Clear done",reset:"New day",focus:"Focus mode",startT:"Start",pause:"Pause",foot:"Your data stays in your browser only. Nothing is sent anywhere.",empty:"No tasks yet. Add your first one and I'll plan your day.",min:"m",overflow:"Not enough hours left in your day for: ",breakTxt:"Break",focusOn:"Focusing on: ",doneMsg:"Time's up! Take a break.",confirmReset:"Delete all tasks and start a new day?",novoice:"This browser doesn't support the mic. Open the site directly in Chrome (Android) or Safari (iPhone), not inside an app like Instagram or WhatsApp.",micDenied:"Mic is blocked. Allow microphone access for this site in browser settings and try again.",noSpeech:"I didn't hear anything. Tap the mic and then speak.",micNet:"Voice input needs an internet connection.",micErr:"Couldn't start the mic. Please try again.",lang:"AR",listening:"Listening... speak now"}
 };
 const $=id=>document.getElementById(id);
 const S=JSON.parse(localStorage.getItem("time.v1")||"null")||{lang:(navigator.language||"ar").startsWith("en")?"en":"ar",theme:"light",tasks:[],start:"08:00",end:"22:00",brk:10,sort:"prio"};
@@ -194,12 +195,41 @@ $("btnLang").onclick=()=>{S.lang=S.lang==="ar"?"en":"ar";applyLang()};
 $("btnTheme").onclick=()=>{S.theme=S.theme==="dark"?"light":"dark";applyLang()};
 $("btnClear").onclick=()=>{S.tasks=S.tasks.filter(x=>!x.done);render()};
 $("btnReset").onclick=()=>{if(confirm(t("confirmReset"))){S.tasks=[];render()}};
-$("btnVoice").onclick=()=>{
+let rec=null;
+function voiceMsg(k){$("voiceMsg").textContent=k?t(k):""}
+$("btnVoice").onclick=async()=>{
   const R=window.SpeechRecognition||window.webkitSpeechRecognition;
-  if(!R){alert(t("novoice"));return}
-  const r=new R();r.lang=S.lang==="ar"?"ar-KW":"en-US";$("title").placeholder=t("listening");
-  r.onresult=e=>{$("title").value=e.results[0][0].transcript};
-  r.onend=()=>{$("title").placeholder=t("ph_title")};r.start();
+  if(!R){voiceMsg("novoice");return}
+  if(rec){try{rec.stop()}catch(_){}return}
+  /* Ask for mic permission explicitly first (needed on many phones) */
+  try{
+    if(navigator.mediaDevices&&navigator.mediaDevices.getUserMedia){
+      const st=await navigator.mediaDevices.getUserMedia({audio:true});
+      st.getTracks().forEach(x=>x.stop());
+    }
+  }catch(_){voiceMsg("micDenied");return}
+  const langs=S.lang==="ar"?["ar-SA","ar-KW","ar"]:["en-US"];
+  let tryIdx=0,gotResult=false;
+  const start=()=>{
+    const r=new R();rec=r;
+    r.lang=langs[tryIdx];r.interimResults=true;r.continuous=false;r.maxAlternatives=1;
+    r.onstart=()=>{voiceMsg("listening");$("btnVoice").textContent="⏹"};
+    r.onresult=e=>{
+      gotResult=true;let txt="";
+      for(let i=0;i<e.results.length;i++)txt+=e.results[i][0].transcript;
+      $("title").value=txt;
+    };
+    r.onerror=e=>{
+      if(e.error==="language-not-supported"&&tryIdx<langs.length-1){tryIdx++;rec=null;start();return}
+      if(e.error==="not-allowed"||e.error==="service-not-allowed")voiceMsg("micDenied");
+      else if(e.error==="no-speech")voiceMsg("noSpeech");
+      else if(e.error==="network")voiceMsg("micNet");
+      else voiceMsg("micErr");
+    };
+    r.onend=()=>{rec=null;$("btnVoice").textContent="🎤";if(gotResult)voiceMsg("")};
+    try{r.start()}catch(_){rec=null;voiceMsg("micErr")}
+  };
+  voiceMsg("");start();
 };
 /* Focus timer */
 let left=1500,tick=null;
