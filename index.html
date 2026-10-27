@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Time | وقتي</title>
-<meta name="description" content="Free daily planner. مخطط يومي مجاني يرتب مهامك ويذكرك بها.">
+<meta name="description" content="Free planner. قل موعدك بصوتك وينبهك، أو خله يرتب يومك.">
 <meta name="theme-color" content="#4f46e5">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
@@ -12,7 +12,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#f4f5fb;--card:#fff;--ink:#1b1f3b;--mut:#6b7090;--pri:#4f46e5;--pri2:#7c3aed;--ok:#16a34a;--star:#f59e0b;--bd:#e4e6f0;--sh:0 6px 20px rgba(40,40,100,.08)}
+:root{--bg:#f4f5fb;--card:#fff;--ink:#1b1f3b;--mut:#6b7090;--pri:#4f46e5;--pri2:#7c3aed;--ok:#16a34a;--warn:#dc2626;--bd:#e4e6f0;--sh:0 6px 20px rgba(40,40,100,.08)}
 :root[data-theme=dark]{--bg:#0f1226;--card:#181c3a;--ink:#eef0ff;--mut:#9aa0c8;--bd:#262b52;--sh:none}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 body{margin:0;font-family:Cairo,system-ui,sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;font-size:16px;line-height:1.5}
@@ -24,63 +24,69 @@ h1{margin:0;font-size:1.6rem;font-weight:800;background:linear-gradient(135deg,v
 .card{background:var(--card);border:1px solid var(--bd);border-radius:18px;padding:16px;margin:12px 0;box-shadow:var(--sh)}
 h2{margin:0 0 10px;font-size:1rem;color:var(--mut);font-weight:600}
 button{font-family:inherit;cursor:pointer}
-/* hero */
+.seg{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:10px 0 4px}
+.seg button{border:2px solid var(--bd);background:var(--card);color:var(--ink);border-radius:16px;padding:12px 8px;font-size:1rem;font-weight:700;line-height:1.3}
+.seg button small{display:block;font-weight:400;color:var(--mut);font-size:.78rem;margin-top:2px}
+.seg button.on{border-color:var(--pri);background:linear-gradient(135deg,var(--pri),var(--pri2));color:#fff}
+.seg button.on small{color:#e6e3ff}
+.mode-desc{color:var(--mut);font-size:.92rem;margin:6px 2px 0}
+textarea,input[type=text],input[type=time],input[type=date],input[type=number]{font:inherit;font-size:1.02rem;padding:12px 14px;border-radius:14px;border:1.5px solid var(--bd);background:var(--bg);color:var(--ink);width:100%}
+textarea{resize:vertical;min-height:70px}
+textarea:focus,input:focus{outline:2px solid var(--pri);border-color:transparent}
+.btns{display:flex;gap:10px;margin-top:10px}
+.mic{flex:none;width:62px;height:54px;border-radius:16px;border:0;background:linear-gradient(135deg,var(--pri),var(--pri2));color:#fff;font-size:1.5rem}
+.mic.rec{background:var(--warn);animation:pulse 1s infinite}
+@keyframes pulse{50%{opacity:.6}}
+.main{flex:1;border:0;border-radius:16px;background:var(--pri);color:#fff;font-size:1.05rem;font-weight:700;padding:14px}
+.ghost{border:1.5px solid var(--bd);background:transparent;color:var(--ink);border-radius:12px;padding:10px 14px;font-weight:600}
+.field{margin-top:12px}
+.field>label,.field>.lb{display:block;font-size:.85rem;color:var(--mut);margin-bottom:6px;font-weight:600}
+.chips{display:flex;gap:8px;flex-wrap:wrap}
+.chip{border:1.5px solid var(--bd);background:var(--bg);color:var(--ink);border-radius:99px;padding:8px 14px;font-size:.92rem;font-weight:600}
+.chip.on{background:var(--pri);border-color:var(--pri);color:#fff}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.sum{margin-top:14px;padding:12px;border-radius:14px;background:var(--bg);border:1px dashed var(--pri);font-size:.95rem}
+.sum div{padding:2px 0}
+.sum .past{text-decoration:line-through;opacity:.5}
+.warnt{color:var(--warn);font-size:.9rem;margin-top:8px}
 .hero{background:linear-gradient(135deg,var(--pri),var(--pri2));color:#fff;border:0;text-align:center;padding:22px 16px}
 .hero .lbl{opacity:.85;font-size:.85rem;font-weight:600}
 .hero .big{font-size:1.5rem;font-weight:800;margin:6px 0 2px;word-break:break-word}
-.hero .sub{opacity:.9;font-size:.95rem}
-.hero .clock{font-size:3.2rem;font-weight:800;direction:ltr;margin:8px 0 0;letter-spacing:1px}
+.hero .sub{opacity:.92;font-size:.95rem}
+.hero .clock{font-size:3.2rem;font-weight:800;direction:ltr;margin:8px 0 0}
 .hero .acts{display:flex;gap:10px;justify-content:center;margin-top:14px;flex-wrap:wrap}
 .hero button{border:0;border-radius:14px;padding:13px 22px;font-size:1.05rem;font-weight:700;min-width:120px}
 .hero .go{background:#fff;color:var(--pri)}
 .hero .ok{background:rgba(255,255,255,.2);color:#fff}
 .hero.empty-h{background:var(--card);color:var(--ink);border:1px dashed var(--bd)}
 .hero.empty-h .sub{color:var(--mut)}
-/* add */
-.addrow{display:flex;gap:8px}
-#title{flex:1;min-width:0;font:inherit;font-size:1.05rem;padding:13px 14px;border-radius:14px;border:1.5px solid var(--bd);background:var(--bg);color:var(--ink)}
-#title:focus{outline:2px solid var(--pri);border-color:transparent}
-.sq{width:50px;border-radius:14px;border:1.5px solid var(--bd);background:var(--bg);color:var(--ink);font-size:1.15rem}
-.sq.on{background:var(--star);border-color:var(--star);color:#fff}
-.chips{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}
-.chip{border:1.5px solid var(--bd);background:var(--bg);color:var(--ink);border-radius:99px;padding:8px 14px;font-size:.92rem;font-weight:600}
-.chip.on{background:var(--pri);border-color:var(--pri);color:#fff}
-.remindrow{display:none;align-items:center;gap:8px;margin-bottom:12px;color:var(--mut);font-size:.9rem}
-.remindrow.show{display:flex}
-.remindrow input{font:inherit;padding:8px 10px;border-radius:10px;border:1.5px solid var(--bd);background:var(--bg);color:var(--ink)}
-.addbtn{width:100%;border:0;border-radius:14px;padding:14px;background:var(--pri);color:#fff;font-size:1.05rem;font-weight:700}
-/* list */
-.row{display:flex;align-items:center;gap:10px;padding:11px 4px;border-bottom:1px solid var(--bd)}
+.row{display:flex;align-items:center;gap:10px;padding:11px 2px;border-bottom:1px solid var(--bd)}
 .row:last-child{border-bottom:0}
 .row input[type=checkbox]{width:24px;height:24px;accent-color:var(--ok);flex:none}
 .row .tt{flex:1;min-width:0}
 .row .tt b{display:block;font-weight:600;word-break:break-word}
-.row .tt small{color:var(--mut)}
-.row .tm{direction:ltr;color:var(--pri);font-weight:700;font-size:.85rem;flex:none;text-align:end}
+.row .tt small{color:var(--mut);display:block}
+.row .tm{direction:ltr;color:var(--pri);font-weight:700;font-size:.85rem;flex:none}
 .row .x{background:none;border:0;color:var(--mut);font-size:1.1rem;padding:6px}
 .row.done b{text-decoration:line-through;opacity:.5}
-.star{color:var(--star)}
-.note{color:var(--mut);font-size:.88rem;text-align:center;padding:10px 0}
-.over{color:#dc2626;font-size:.88rem;margin-top:8px}
+.pill{border:1.5px solid var(--bd);background:var(--bg);color:var(--ink);border-radius:99px;padding:4px 10px;font-size:.78rem;font-weight:700;flex:none}
+.note{color:var(--mut);font-size:.9rem;text-align:center;padding:10px 0}
+.over{color:var(--warn);font-size:.88rem;margin-top:8px}
 details summary{cursor:pointer;color:var(--mut);font-weight:600;list-style:none}
 details summary::-webkit-details-marker{display:none}
-/* banner + settings */
 .banner{background:var(--card);border:1px solid var(--pri);border-radius:14px;padding:12px 14px;margin:10px 0;display:flex;gap:10px;align-items:center;justify-content:space-between;font-size:.9rem}
 .banner button{background:var(--pri);color:#fff;border:0;border-radius:10px;padding:9px 14px;font-weight:700;white-space:nowrap}
-.set{display:none}.set.show{display:block}
-.grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
-.grid label{display:flex;flex-direction:column;font-size:.82rem;color:var(--mut);gap:4px}
-.grid input{font:inherit;padding:9px;border-radius:10px;border:1.5px solid var(--bd);background:var(--bg);color:var(--ink);width:100%}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.grid3 label{display:flex;flex-direction:column;font-size:.82rem;color:var(--mut);gap:4px}
 .btnrow{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
-.ghost{border:1.5px solid var(--bd);background:transparent;color:var(--ink);border-radius:12px;padding:10px 14px;font-weight:600}
 .hint{color:var(--mut);font-size:.82rem;margin-top:10px}
-/* toasts */
 #toasts{position:fixed;inset-inline:0;bottom:calc(14px + env(safe-area-inset-bottom));display:flex;flex-direction:column;align-items:center;gap:8px;pointer-events:none;z-index:50;padding:0 12px}
 .toast{pointer-events:auto;background:#1b1f3b;color:#fff;border-radius:14px;padding:12px 16px;font-size:.95rem;box-shadow:0 8px 24px rgba(0,0,0,.3);display:flex;gap:14px;align-items:center;max-width:460px;animation:up .2s}
 .toast.alert{background:var(--pri);font-weight:700}
 .toast button{background:none;border:0;color:#fbbf24;font-weight:800;font-size:.95rem}
 @keyframes up{from{transform:translateY(12px);opacity:0}to{transform:none;opacity:1}}
 footer{text-align:center;color:var(--mut);font-size:.78rem;padding:18px 0 80px}
+[hidden]{display:none!important}
 </style>
 </head>
 <body>
@@ -91,42 +97,82 @@ footer{text-align:center;color:var(--mut);font-size:.78rem;padding:18px 0 80px}
 
 <main class="wrap">
   <div id="banner"></div>
-  <section class="card hero" id="hero"></section>
+  <div class="seg" id="seg">
+    <button data-m="A" id="segA"></button>
+    <button data-m="B" id="segB"></button>
+  </div>
+  <p class="mode-desc" id="modeDesc"></p>
 
-  <section class="card">
-    <h2 id="hAdd"></h2>
-    <form id="form" autocomplete="off">
-      <div class="addrow">
-        <input id="title" required>
-        <button type="button" class="sq" id="bVoice" aria-label="mic">🎤</button>
-        <button type="button" class="sq" id="bStar" aria-label="important">☆</button>
+  <!-- ========== MODE A: reminders ========== -->
+  <div id="secA">
+    <section class="card">
+      <h2 id="aH"></h2>
+      <textarea id="aText" rows="2"></textarea>
+      <div class="btns">
+        <button class="mic" id="aMic" aria-label="mic">🎤</button>
+        <button class="main" id="aParse"></button>
       </div>
-      <div class="chips" id="chips"></div>
-      <div class="chips"><button type="button" class="chip" id="bRemind"></button></div>
-      <div class="remindrow" id="remindRow"><span id="remindLbl"></span><input type="time" id="remind"></div>
-      <button class="addbtn" type="submit" id="bAdd"></button>
-    </form>
-  </section>
+      <div class="hint" id="aEx"></div>
+    </section>
 
-  <section class="card">
-    <h2 id="hNext"></h2>
-    <div id="list"></div>
-    <div id="over" class="over"></div>
-  </section>
+    <section class="card" id="aForm" hidden>
+      <h2 id="aFormH"></h2>
+      <div class="field"><label for="aTitle" id="lTitle"></label><input type="text" id="aTitle"></div>
+      <div class="field"><span class="lb" id="lDay"></span>
+        <div class="chips" id="aDays"></div>
+        <input type="date" id="aDate" style="margin-top:8px">
+      </div>
+      <div class="field"><label for="aTime" id="lTime"></label><input type="time" id="aTime"></div>
+      <div class="field"><span class="lb" id="lOffs"></span><div class="chips" id="aOffs"></div></div>
+      <div class="sum" id="aSum"></div>
+      <div class="warnt" id="aWarn"></div>
+      <div class="btns">
+        <button class="ghost" id="aCancel"></button>
+        <button class="main" id="aSave"></button>
+      </div>
+    </section>
 
-  <details class="card" id="doneBox"><summary id="doneSum"></summary><div id="doneList"></div></details>
+    <section class="card">
+      <h2 id="aListH"></h2>
+      <div id="aList"></div>
+    </section>
+    <details class="card" id="aPastBox"><summary id="aPastSum"></summary><div id="aPast"></div></details>
+  </div>
 
-  <section class="card set" id="set">
+  <!-- ========== MODE B: auto plan ========== -->
+  <div id="secB" hidden>
+    <section class="card">
+      <h2 id="bH"></h2>
+      <textarea id="bText" rows="4"></textarea>
+      <div class="btns">
+        <button class="mic" id="bMic" aria-label="mic">🎤</button>
+        <button class="main" id="bGo"></button>
+      </div>
+      <div class="hint" id="bEx"></div>
+    </section>
+
+    <section class="card hero" id="hero"></section>
+
+    <section class="card">
+      <h2 id="bPlanH"></h2>
+      <div id="bList"></div>
+      <div id="bOver" class="over"></div>
+      <div class="btnrow"><button class="ghost" id="bRe"></button></div>
+    </section>
+    <details class="card" id="bDoneBox"><summary id="bDoneSum"></summary><div id="bDone"></div></details>
+  </div>
+
+  <section class="card" id="set" hidden>
     <h2 id="hSet"></h2>
-    <div class="grid">
+    <div class="grid3">
       <label><span id="lStart"></span><input type="time" id="start"></label>
       <label><span id="lEnd"></span><input type="time" id="end"></label>
       <label><span id="lBrk"></span><input type="number" id="brk" min="0" max="60" step="5"></label>
     </div>
     <div class="btnrow">
       <button class="ghost" id="bNotif"></button>
-      <button class="ghost" id="bClear"></button>
-      <button class="ghost" id="bReset"></button>
+      <button class="ghost" id="bTest"></button>
+      <button class="ghost" id="bWipe"></button>
     </div>
     <div class="hint" id="hintInstall"></div>
   </section>
@@ -135,246 +181,656 @@ footer{text-align:center;color:var(--mut);font-size:.78rem;padding:18px 0 80px}
 <div id="toasts" aria-live="polite"></div>
 
 <script>
+/* =====================================================================
+   TEXT (Arabic / English)
+   ===================================================================== */
 const I18={
-ar:{app:"وقتي",title_ph:"شنو تبي تسوي؟",hAdd:"أضف مهمة",bAdd:"إضافة المهمة",star:"مهمة مهمة جداً",mins:"د",remindBtn:"⏰ ذكرني بوقت محدد",remindLbl:"نبهني الساعة:",
-hNext:"المهام القادمة",done:"المنجزة",hSet:"الإعدادات",lStart:"بداية اليوم",lEnd:"نهاية اليوم",lBrk:"استراحة (د)",
-now:"الحين",next:"التالية",noTasks:"ما عندك مهام الحين",noTasksSub:"اكتب أول مهمة تحت وأنا أرتب لك اليوم.",
-go:"▶ ابدأ",pause:"⏸ إيقاف",resume:"▶ كمل",finish:"✓ خلصت",
-emptyList:"ما فيه مهام ثانية.",doneNone:"ما أنجزت شي لسا.",
-notifOn:"🔔 التنبيهات: مفعّلة",notifOff:"🔔 فعّل التنبيهات",notifBlocked:"🔕 التنبيهات ممنوعة من المتصفح",notifNA:"🔕 التنبيهات غير مدعومة هنا",
-banner:"فعّل التنبيهات عشان أنبهك لما يحين وقت مهمتك أو ينتهي المؤقت.",bannerBtn:"تفعيل",
-clearDone:"حذف المنجزة",reset:"يوم جديد",
-hintInstall:"لتنبيهات أفضل على الجوال: أضف الموقع للشاشة الرئيسية (من قائمة المتصفح). ملاحظة: المتصفح ما يقدر ينبهك والموقع مغلق تماماً.",
+ar:{app:"وقتي",
+segA:"⏰ دير يومك بنفسك",segAs:"تنبيهات لمواعيدك",segB:"🧠 ندير عنك يومك",segBs:"ترتيب تلقائي لمهامك",
+descA:"قل موعدك بصوتك أو اكتبه، وحدد متى تبي التنبيه. ينبهك التطبيق في الوقت اللي تختاره.",
+descB:"قل مهام اليوم، والبرنامج يرتبها من الأهم للأقل ويوزع لها الأوقات وينبهك عند كل مهمة.",
+aH:"قل موعدك أو اكتبه",aPh:"مثال: عندي موعد اليوم الساعة 5 أروح لبيت عمي، نبهني قبلها بساعة",aParse:"✨ فهّم الموعد",
+aEx:"اضغط 🎤 وتكلم بشكل عادي. أي شي ما فهمته أقدر تعدله بنفسك قبل الحفظ.",
+aFormH:"تأكيد التنبيه",lTitle:"اسم الشيء اللي تبي أنبهك له",lDay:"اليوم",lTime:"وقت الموعد",lOffs:"متى أنبهك؟ (تقدر تختار أكثر من وقت)",
+sumH:"راح أنبهك:",pastTag:"فات",evPast:"وقت الموعد مضى. غيّر اليوم أو الوقت.",needTime:"حدد وقت الموعد.",needTitle:"اكتب اسم الموعد.",
+save:"حفظ التنبيه",cancel:"إلغاء",aListH:"تنبيهاتك القادمة",aNone:"ما عندك تنبيهات قادمة.",aPastS:"السابقة",aPastNone:"لا يوجد.",clearPast:"حذف السابقة",
+today:"اليوم",tomorrow:"بكرة",after:"بعد بكرة",
+atEvent:"عند الموعد",min:"دقيقة",hour:"ساعة",hours2:"ساعتين",day:"يوم",hrHalf:"ساعة ونص",
+bH:"قل مهام اليوم",bPh:"كل مهمة بسطر أو افصلها بفاصلة.\nمثال:\nأراجع الدروس ساعتين\nضروري أسلم التقرير\nأشتري خبز إذا فضيت",bGo:"🧠 رتّب يومي",
+bEx:"قل «ضروري» أو «عاجل» للمهم، و«إذا فضيت» للخفيف، وقل المدة (نص ساعة، ساعتين...) لو تبي. غير ذلك نحط 30 دقيقة.",
+bPlanH:"جدول يومك",bNone:"ما عندك مهام. اكتب أو قل مهام اليوم فوق.",bRe:"🔄 رتّب من جديد",bDoneS:"المنجزة",bDoneNone:"ما أنجزت شي لسا.",
+now:"الحين",go:"▶ ابدأ",pause:"⏸ إيقاف",resume:"▶ كمل",finish:"✓ خلصت",noTasks:"ما عندك مهام الحين",noTasksSub:"قل مهام اليوم فوق وأرتبها لك.",
+imp2:"مهم جداً",imp1:"متوسط",imp0:"خفيف",mins:"د",overflow:"ما يكفي وقت اليوم لهذي المهام: ",
+hSet:"الإعدادات",lStart:"بداية اليوم",lEnd:"نهاية اليوم",lBrk:"استراحة (د)",
+notifOn:"🔔 التنبيهات: مفعّلة",notifOff:"🔔 فعّل التنبيهات",notifBlocked:"🔕 ممنوعة من المتصفح",notifNA:"🔕 غير مدعومة هنا",test:"🔊 جرّب تنبيه",wipe:"🗑 مسح كل البيانات",
+banner:"فعّل التنبيهات عشان أنبهك في الوقت اللي تحدده.",bannerBtn:"تفعيل",
+hintInstall:"لتنبيهات أفضل على الجوال: أضف الموقع للشاشة الرئيسية من قائمة المتصفح. المتصفح ما يقدر ينبهك والموقع مغلق تماماً، فخله مفتوح أو بالخلفية.",
 foot:"بياناتك محفوظة في متصفحك فقط ولا تُرسل لأي مكان.",
-added:"انضافت المهمة",startsAt:"تبدأ",undo:"تراجع",deleted:"انحذفت المهمة",nice:"أحسنت! ✓",
-cleared:"تم حذف المنجزة",resetDone:"بدأت يوم جديد",
-timeUp:"انتهى الوقت: ",itsTime:"حان وقت: ",restBreak:"خذ استراحة قصيرة 🙂",
-overflow:"ما يكفي وقت اليوم لهذي المهام: ",
+saved:"تم الحفظ ✓",deleted:"انحذف",undo:"تراجع",nice:"أحسنت! ✓",
+alertTitle:"🔔 ",itsNow:"حان موعدك الحين",remainOf:"باقي {x} على موعدك",at:"الساعة",
+startNow:"حان وقت: ",timeUp:"انتهى الوقت: ",restBreak:"خذ استراحة قصيرة 🙂",
+planned:"تم ترتيب {n} مهمة",
 novoice:"المتصفح هذا ما يدعم المايك. افتح الموقع من كروم (أندرويد) أو سفاري (آيفون) مباشرة، مو من داخل تطبيق مثل انستقرام أو واتساب.",
 micDenied:"المايك ممنوع. فعّل إذن الميكروفون للموقع من إعدادات المتصفح.",noSpeech:"ما سمعت صوت. اضغط المايك وتكلم.",micNet:"الإدخال الصوتي يحتاج إنترنت.",micErr:"تعذر تشغيل المايك. جرب مرة ثانية.",listening:"أسمعك... تكلم الحين",
-notifTestOk:"تم التفعيل. راح تصلك التنبيهات.",lang:"EN",min:"دقيقة"},
-en:{app:"Time",title_ph:"What do you need to do?",hAdd:"Add a task",bAdd:"Add task",star:"Mark as important",mins:"m",remindBtn:"⏰ Remind me at a time",remindLbl:"Alert me at:",
-hNext:"Up next",done:"Done",hSet:"Settings",lStart:"Day starts",lEnd:"Day ends",lBrk:"Break (m)",
-now:"Now",next:"Next",noTasks:"No tasks right now",noTasksSub:"Type your first task below and I'll plan your day.",
-go:"▶ Start",pause:"⏸ Pause",resume:"▶ Resume",finish:"✓ Done",
-emptyList:"No other tasks.",doneNone:"Nothing done yet.",
-notifOn:"🔔 Alerts: on",notifOff:"🔔 Turn on alerts",notifBlocked:"🔕 Alerts blocked by browser",notifNA:"🔕 Alerts not supported here",
-banner:"Turn on alerts so I can notify you when a task is due or the timer ends.",bannerBtn:"Enable",
-clearDone:"Clear done",reset:"New day",
-hintInstall:"For better alerts on mobile: add this site to your home screen (browser menu). Note: browsers can't alert you when the site is fully closed.",
+nothingHeard:"اكتب أو قل موعدك أول.",wipeAsk:"اضغط مرة ثانية للتأكيد",wiped:"تم مسح كل البيانات",notifTestOk:"تم التفعيل",
+fallbackTitle:"موعد",lang:"EN"},
+en:{app:"Time",
+segA:"⏰ Manage it yourself",segAs:"Reminders for appointments",segB:"🧠 We manage your day",segBs:"Auto-plan your tasks",
+descA:"Say or type your appointment and choose when you want the alert. The app alerts you at the time you pick.",
+descB:"Tell me today's tasks. I'll order them from most to least important, set times and alert you at each one.",
+aH:"Say or type your appointment",aPh:"e.g. I have an appointment today at 5 to visit my uncle, remind me 1 hour before",aParse:"✨ Understand it",
+aEx:"Tap 🎤 and talk normally. You can edit anything I misunderstood before saving.",
+aFormH:"Confirm reminder",lTitle:"What should I remind you about?",lDay:"Day",lTime:"Appointment time",lOffs:"When should I alert you? (pick several)",
+sumH:"I'll alert you:",pastTag:"passed",evPast:"The appointment time has passed. Change the day or time.",needTime:"Set the appointment time.",needTitle:"Enter a name.",
+save:"Save reminder",cancel:"Cancel",aListH:"Your upcoming alerts",aNone:"No upcoming alerts.",aPastS:"Past",aPastNone:"None.",clearPast:"Clear past",
+today:"Today",tomorrow:"Tomorrow",after:"Day after",
+atEvent:"At the time",min:"min",hour:"1 hour",hours2:"2 hours",day:"1 day",hrHalf:"1.5 hours",
+bH:"Tell me today's tasks",bPh:"One task per line, or separate with commas.\nExample:\nReview lessons 2 hours\nUrgent: submit the report\nBuy bread if I have time",bGo:"🧠 Plan my day",
+bEx:"Say \"urgent\" or \"important\" for key tasks, \"if I have time\" for light ones, and the duration (half an hour, 2 hours...). Otherwise I use 30 minutes.",
+bPlanH:"Your day plan",bNone:"No tasks. Type or say today's tasks above.",bRe:"🔄 Re-plan",bDoneS:"Done",bDoneNone:"Nothing done yet.",
+now:"Now",go:"▶ Start",pause:"⏸ Pause",resume:"▶ Resume",finish:"✓ Done",noTasks:"No tasks right now",noTasksSub:"Tell me today's tasks above and I'll plan them.",
+imp2:"Important",imp1:"Medium",imp0:"Light",mins:"m",overflow:"Not enough time today for: ",
+hSet:"Settings",lStart:"Day starts",lEnd:"Day ends",lBrk:"Break (m)",
+notifOn:"🔔 Alerts: on",notifOff:"🔔 Turn on alerts",notifBlocked:"🔕 Blocked by browser",notifNA:"🔕 Not supported here",test:"🔊 Test alert",wipe:"🗑 Erase all data",
+banner:"Turn on alerts so I can notify you at the time you choose.",bannerBtn:"Enable",
+hintInstall:"For better alerts on mobile, add this site to your home screen from the browser menu. Browsers can't alert you when the site is fully closed, so keep it open or in the background.",
 foot:"Your data stays in your browser only. Nothing is sent anywhere.",
-added:"Task added",startsAt:"starts",undo:"Undo",deleted:"Task deleted",nice:"Nice work! ✓",
-cleared:"Done tasks cleared",resetDone:"New day started",
-timeUp:"Time's up: ",itsTime:"It's time: ",restBreak:"Take a short break 🙂",
-overflow:"Not enough time today for: ",
+saved:"Saved ✓",deleted:"Deleted",undo:"Undo",nice:"Nice work! ✓",
+alertTitle:"🔔 ",itsNow:"It's time now",remainOf:"{x} left until your appointment",at:"at",
+startNow:"Time for: ",timeUp:"Time's up: ",restBreak:"Take a short break 🙂",
+planned:"Planned {n} tasks",
 novoice:"This browser doesn't support the mic. Open the site directly in Chrome (Android) or Safari (iPhone), not inside an app like Instagram or WhatsApp.",
 micDenied:"Mic is blocked. Allow microphone access for this site in browser settings.",noSpeech:"I didn't hear anything. Tap the mic and speak.",micNet:"Voice input needs internet.",micErr:"Couldn't start the mic. Try again.",listening:"Listening... speak now",
-notifTestOk:"Enabled. You'll get your alerts.",lang:"AR",min:"min"}
+nothingHeard:"Type or say your appointment first.",wipeAsk:"Tap again to confirm",wiped:"All data erased",notifTestOk:"Enabled",
+fallbackTitle:"Appointment",lang:"AR"}
 };
+
+/* =====================================================================
+   HELPERS
+   ===================================================================== */
 const $=id=>document.getElementById(id);
 const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-const todayStr=()=>{const d=new Date();return d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate()};
-const toMin=s=>{const[a,b]=(s||"0:0").split(":").map(Number);return a*60+b};
-const fmt=m=>{m=Math.round(m);return String(Math.floor(m/60)%24).padStart(2,"0")+":"+String(m%60).padStart(2,"0")};
-const nowMin=()=>{const d=new Date();return d.getHours()*60+d.getMinutes()};
+const pad=n=>String(n).padStart(2,"0");
+const dateStr=d=>d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate());
+const timeStr=d=>pad(d.getHours())+":"+pad(d.getMinutes());
+const toMin=s=>{const[a,b]=(s||"0:0").split(":").map(Number);return (a||0)*60+(b||0)};
+function atTime(base,hhmm,addDays){const d=new Date(base);d.setHours(0,0,0,0);d.setDate(d.getDate()+(addDays||0));const m=toMin(hhmm);d.setHours(Math.floor(m/60),m%60,0,0);return d.getTime()}
 
-/* ---------- state ---------- */
 function load(){
-  const def={lang:(navigator.language||"ar").startsWith("en")?"en":"ar",theme:"light",tasks:[],start:"08:00",end:"22:00",brk:5,timer:null,notif:true,bannerOff:false};
+  const def={lang:(navigator.language||"ar").startsWith("en")?"en":"ar",theme:"light",mode:"A",start:"08:00",end:"22:00",brk:5,
+    notif:true,reminders:[],tasks:[],timer:null,over:[]};
   try{
-    let s=JSON.parse(localStorage.getItem("time.v2")||"null");
-    if(!s){const o=JSON.parse(localStorage.getItem("time.v1")||"null");
-      if(o){s={...def,lang:o.lang||def.lang,theme:o.theme||"light",start:o.start||def.start,end:o.end||def.end,brk:o.brk??5,
-        tasks:(o.tasks||[]).map(x=>({id:uid(),title:x.title,mins:x.mins,star:x.prio==="high",remind:"",done:!!x.done}))}}}
+    let s=JSON.parse(localStorage.getItem("time.v3")||"null");
+    if(!s){
+      const o=JSON.parse(localStorage.getItem("time.v2")||"null");
+      if(o)s={lang:o.lang,theme:o.theme,start:o.start,end:o.end,brk:o.brk,
+        tasks:(o.tasks||[]).map(x=>({id:x.id||uid(),title:x.title,mins:x.mins||30,imp:x.star?2:1,done:!!x.done}))};
+    }
     return {...def,...(s||{})};
   }catch(_){return def}
 }
 const S=load();
-const save=()=>{try{localStorage.setItem("time.v2",JSON.stringify(S))}catch(_){}};
+const save=()=>{try{localStorage.setItem("time.v3",JSON.stringify(S))}catch(_){}};
 const T=k=>I18[S.lang][k];
-let draft={mins:30,star:false,remind:""};
 
-/* ---------- toasts ---------- */
+function fmtT(ms){
+  const d=new Date(ms);let h=d.getHours();const m=pad(d.getMinutes());
+  const ar=S.lang==="ar";const ap=h>=12?(ar?"م":"PM"):(ar?"ص":"AM");
+  return (h%12||12)+":"+m+" "+ap;
+}
+function dayLabel(ms,ref){
+  const a=new Date(ref||Date.now());a.setHours(0,0,0,0);
+  const b=new Date(ms);b.setHours(0,0,0,0);
+  const diff=Math.round((b-a)/86400000);
+  if(diff===0)return T("today");if(diff===1)return T("tomorrow");if(diff===2&&S.lang==="ar")return T("after");
+  try{return new Date(ms).toLocaleDateString(S.lang==="ar"?"ar":"en-US",{weekday:"long",day:"numeric",month:"short"})}catch(_){return dateStr(new Date(ms))}
+}
+function offLabel(m){
+  if(m===0)return T("atEvent");
+  if(m===60)return T("hour");if(m===120)return T("hours2");if(m===90)return T("hrHalf");if(m===1440)return T("day");
+  if(m>60&&m%60===0)return (m/60)+" "+(S.lang==="ar"?"ساعات":"hours");
+  if(m>60){return Math.floor(m/60)+(S.lang==="ar"?" س ":"h ")+(m%60)+(S.lang==="ar"?" د":"m")}
+  return m+" "+T("min");
+}
+
+/* =====================================================================
+   PARSER  (Arabic Gulf dialect + English)
+   ===================================================================== */
+const AR_DIG="٠١٢٣٤٥٦٧٨٩";
+const cleanOrig=s=>s.replace(/[٠-٩]/g,d=>AR_DIG.indexOf(d)).replace(/[ً-ٰٟـ]/g,"");
+const normChars=s=>s.replace(/[أإآٱ]/g,"ا").replace(/ى/g,"ي").replace(/ة/g,"ه").replace(/ؤ/g,"و").replace(/ئ/g,"ي").toLowerCase();
+
+const NUMW={"واحد":1,"وحده":1,"واحده":1,"اثنين":2,"اثنتين":2,"ثنتين":2,"ثنين":2,"اثنان":2,"ثلاثه":3,"ثلاث":3,"تلاته":3,"تلات":3,"اربعه":4,"اربع":4,
+ "خمسه":5,"خمس":5,"سته":6,"ست":6,"سبعه":7,"سبع":7,"ثمانيه":8,"ثماني":8,"ثمان":8,"تمانيه":8,"تسعه":9,"تسع":9,"عشره":10,"عشر":10,
+ "احدعش":11,"حداشر":11,"حدعش":11,"اثنعش":12,"اثناعشر":12,"ثنعش":12,"طناعش":12,"خمستعش":15,"خمسطعش":15,"عشرين":20,"ثلاثين":30,"اربعين":40,"خمسين":50,
+ "one":1,"two":2,"three":3,"four":4,"five":5,"six":6,"seven":7,"eight":8,"nine":9,"ten":10,"eleven":11,"twelve":12};
+const FR={"نص":.5,"نصف":.5,"ربع":.25,"ثلث":1/3};
+const HOUR=new Set(["ساعه","ساعات","hour","hours","hr","hrs"]);
+const MINU=new Set(["دقيقه","دقايق","دقائق","دقيقه","min","mins","minute","minutes"]);
+const KW=new Set([...Object.keys(NUMW),...Object.keys(FR),"ساعه","ساعات","ساعتين","دقيقه","دقايق","دقائق","دقيقتين","يوم","يومين","قبل","قبلها","قبله","قبلي","الساعه","الا","او","بكره","بكرا","غدا","غدوه","اليوم","الليله","بعد"]);
+function canon(w){
+  if(KW.has(w))return w;
+  if(w.length>1&&(w[0]==="و"||w[0]==="ب")&&KW.has(w.slice(1)))return w.slice(1);
+  if(w.length>2&&w.slice(0,2)==="وب"&&KW.has(w.slice(2)))return w.slice(2);
+  return w;
+}
+const isNum=w=>/^\d+(?:[.,]\d+)?$/.test(w)||NUMW[w]!==undefined;
+const numVal=w=>/^\d/.test(w)?parseFloat(w.replace(",",".")):NUMW[w];
+
+function tokenize(o){
+  const n=normChars(o);const toks=[];const re=/\S+/g;let m;
+  while((m=re.exec(o))){
+    let w=n.substr(m.index,m[0].length);
+    const lead=(w.match(/^[،,؛;!؟?"'()]+/)||[""])[0].length;
+    const rest=w.slice(lead);
+    const trail=(rest.match(/[،,؛;:!؟?."'()]+$/)||[""])[0].length;
+    toks.push({o:m[0],w:rest.slice(0,rest.length-trail),used:false});
+  }
+  return toks;
+}
+function parseDurAt(T,i){
+  const a=T[i];if(!a)return null;const w=canon(a.w);
+  const nx=k=>T[i+k]?canon(T[i+k].w):"";
+  const addFrac=(base,len)=>{const f=FR[nx(len)];if(f!==undefined&&base>=60)return{mins:Math.round(base+f*60),len:len+1};return{mins:base,len}};
+  if(FR[w]!==undefined&&HOUR.has(nx(1)))return{mins:Math.round(FR[w]*60),len:2};
+  if(w==="ساعتين")return addFrac(120,1);
+  if(w==="دقيقتين")return{mins:2,len:1};
+  if(w==="يومين")return{mins:2880,len:1};
+  if(w==="يوم"||w==="day")return{mins:1440,len:1};
+  if(isNum(w)){const n=numVal(w);
+    if(HOUR.has(nx(1)))return addFrac(Math.round(n*60),2);
+    if(MINU.has(nx(1)))return{mins:Math.round(n),len:2};}
+  if(w==="ساعه"||w==="hour")return addFrac(60,1);
+  if(w==="a"||w==="an"){if(HOUR.has(nx(1)))return{mins:60,len:2};}
+  if(w==="half"&&nx(1)==="an"&&HOUR.has(nx(2)))return{mins:30,len:3};
+  if(w==="half"&&nx(1)==="hour")return{mins:30,len:2};
+  return null;
+}
+function findOffsets(T){
+  const offs=[];
+  for(let i=0;i<T.length;i++){
+    const w=canon(T[i].w);
+    if(["قبل","قبلها","قبله","قبلي"].includes(w)){
+      let j=i+1;if(T[j]&&T[j].w==="ب")j++;
+      let d=parseDurAt(T,j);
+      if(d){
+        offs.push(d.mins);for(let k=i;k<j+d.len;k++)T[k].used=true;
+        let p=j+d.len;
+        /* "قبلها بساعة او نص ساعة" -> several alerts */
+        while(T[p]&&(canon(T[p].w)==="او"||T[p].w==="or")){
+          T[p].used=true;const d2=parseDurAt(T,p+1);
+          if(!d2)break;offs.push(d2.mins);for(let k=p+1;k<p+1+d2.len;k++)T[k].used=true;p=p+1+d2.len;
+        }
+      }
+    }else if(w==="before"&&i>=1){
+      for(const len of [3,2,1]){
+        if(i-len<0)continue;const d=parseDurAt(T,i-len);
+        if(d&&d.len===len){offs.push(d.mins);for(let k=i-len;k<=i;k++)T[k].used=true;break}
+      }
+    }
+  }
+  return [...new Set(offs)].filter(x=>x>=0&&x<=10080);
+}
+const PERIOD={"الصبح":"am","صباحا":"am","صباح":"am","فجرا":"am","الفجر":"am","فجر":"am","am":"am","morning":"am",
+ "العصر":"pm","عصرا":"pm","عصر":"pm","المغرب":"pm","مغرب":"pm","مساء":"pm","المسا":"pm","العشاء":"pm","عشاء":"pm","pm":"pm","afternoon":"pm","evening":"pm",
+ "الظهر":"noon","ظهرا":"noon","ظهر":"noon","noon":"noon",
+ "الليل":"night","بالليل":"night","ليلا":"night","الليله":"night","tonight":"night","night":"night"};
+const WEEKD={"الاحد":0,"الاثنين":1,"الثلاثاء":2,"الاربعاء":3,"الخميس":4,"الجمعه":5,"السبت":6,
+ "sunday":0,"monday":1,"tuesday":2,"wednesday":3,"thursday":4,"friday":5,"saturday":6};
+
+function findDay(T,now){
+  let off=null;
+  for(let i=0;i<T.length;i++){
+    if(T[i].used)continue;const w=T[i].w;
+    if(w==="بعد"&&T[i+1]&&["بكره","بكرا","غد","غدا"].includes(canon(T[i+1].w))){off=2;T[i].used=T[i+1].used=true;continue}
+    if(["بعدغد","بعدبكره"].includes(w)){off=2;T[i].used=true;continue}
+    if(["بكره","بكرا","غدا","غد","غدوه","tomorrow"].includes(w)){off=1;T[i].used=true;continue}
+    if(["اليوم","today","الليله","tonight"].includes(w)){if(off===null)off=0;T[i].used=true;continue}
+    if(WEEKD[w]!==undefined){
+      const diff=(WEEKD[w]-now.getDay()+7)%7;off=diff===0?7:diff;T[i].used=true;
+      if(i>0&&!T[i-1].used&&["يوم","on"].includes(T[i-1].w))T[i-1].used=true;
+    }
+  }
+  return off;
+}
+function parseMods(T,k,hm){
+  /* after the hour number: ونص / وربع / الا ربع / و 30 دقيقة */
+  const c=j=>T[j]&&!T[j].used?canon(T[j].w):"";
+  const w=c(k);
+  if(FR[w]!==undefined&&!HOUR.has(c(k+1))){hm.mn=Math.round(FR[w]*60);T[k].used=true;return k+1}
+  if(w==="الا"){
+    const f=c(k+1);
+    if(FR[f]!==undefined){hm.hr-=1;hm.mn=60-Math.round(FR[f]*60);T[k].used=T[k+1].used=true;return k+2}
+    if(isNum(f)){const v=numVal(f);if(v>0&&v<60){hm.hr-=1;hm.mn=60-v;T[k].used=T[k+1].used=true;let e=k+2;if(MINU.has(c(e))){T[e].used=true;e++}return e}}
+  }
+  if(w==="و"||/^و\d+$/.test(T[k]&&T[k].w||"")){
+    let kk=k,num=null;
+    if(/^و\d+$/.test(T[k].w)){num=parseInt(T[k].w.slice(1),10);kk=k+1;T[k].used=true}
+    else if(isNum(c(k+1))){num=numVal(c(k+1));T[k].used=T[k+1].used=true;kk=k+2}
+    if(num!==null&&num>0&&num<60){hm.mn=num;if(MINU.has(c(kk))){T[kk].used=true;kk++}return kk}
+  }
+  return k;
+}
+function findTime(T){
+  const hm={hr:null,mn:0};let period=null;
+  const clk=/^(\d{1,2})[:.](\d{2})$/;
+  const ampm=/^(\d{1,2})(?:[:.](\d{2}))?(am|pm)$/;
+  /* 1) 5pm / 5:30pm */
+  for(let i=0;i<T.length&&hm.hr===null;i++){
+    if(T[i].used)continue;const m=T[i].w.match(ampm);
+    if(m){hm.hr=parseInt(m[1],10);hm.mn=m[2]?parseInt(m[2],10):0;period=m[3];T[i].used=true}
+  }
+  /* 2) keyword + number */
+  for(let i=0;i<T.length&&hm.hr===null;i++){
+    if(T[i].used)continue;const w=T[i].w;
+    if(["الساعه","ساعه","على","عند","at"].includes(w)||w==="الساعه"){
+      let j=i+1;while(T[j]&&["الساعه","ساعه"].includes(T[j].w))j++;
+      if(!T[j]||T[j].used)continue;
+      const cw=canon(T[j].w);const cm=cw.match(clk);
+      if(cm){hm.hr=parseInt(cm[1],10);hm.mn=parseInt(cm[2],10);for(let k=i;k<=j;k++)T[k].used=true;break}
+      if(isNum(cw)&&numVal(cw)>=0&&numVal(cw)<=24&&Number.isInteger(numVal(cw))){
+        hm.hr=numVal(cw);for(let k=i;k<=j;k++)T[k].used=true;parseMods(T,j+1,hm);break;
+      }
+    }
+  }
+  /* 3) bare 5:30 */
+  if(hm.hr===null)for(let i=0;i<T.length;i++){
+    if(T[i].used)continue;const m=T[i].w.match(clk);
+    if(m){hm.hr=parseInt(m[1],10);hm.mn=parseInt(m[2],10);T[i].used=true;break}
+  }
+  /* 4) number followed by a period word:  5 العصر */
+  if(hm.hr===null)for(let i=0;i<T.length-1;i++){
+    if(T[i].used||T[i+1].used)continue;const c=canon(T[i].w);
+    if(isNum(c)&&Number.isInteger(numVal(c))&&numVal(c)>=1&&numVal(c)<=12&&PERIOD[T[i+1].w]){
+      hm.hr=numVal(c);T[i].used=true;parseMods(T,i+2,hm);break;
+    }
+  }
+  /* period words */
+  for(let i=0;i<T.length;i++){
+    if(T[i].used)continue;if(PERIOD[T[i].w]){if(!period)period=PERIOD[T[i].w];T[i].used=true}
+  }
+  return {hr:hm.hr,mn:hm.mn,period};
+}
+function resolveTime(hr,mn,period,now,dayOff){
+  const base=new Date(now);base.setHours(0,0,0,0);
+  const mk=(h,off)=>{const d=new Date(base);d.setDate(d.getDate()+off);d.setHours(h,mn,0,0);return d.getTime()};
+  if(hr<0){hr+=24}
+  let cands;
+  if(hr>=13||hr===0)cands=[hr];
+  else if(period==="am")cands=[hr===12?0:hr];
+  else if(period==="pm")cands=[hr===12?12:hr+12];
+  else if(period==="noon")cands=[hr===12?12:(hr<=6?hr+12:hr)];
+  else if(period==="night")cands=[hr===12?24:(hr>=6?hr+12:hr)];
+  else cands=hr===12?[12,0]:(hr<=11?[hr,hr+12]:[hr]);
+  const pref=(!period&&cands.length===2&&hr<=6)?[cands[1],cands[0]]:cands;
+  if(dayOff!==null&&dayOff>0)return mk(pref[0],dayOff);
+  const fut=cands.map(h=>mk(h,0)).filter(t=>t>now).sort((a,b)=>a-b);
+  if(fut.length)return fut[0];
+  if(dayOff===0)return mk(cands[cands.length-1],0);
+  return mk(pref[0],1);
+}
+const STOP=new Set(["عندي","عندنا","لدي","عندك","نبهني","نبهنا","ذكرني","ذكرنا","تنبيه","نبه","ابي","ابغي","ابغا","ابغى","اريد","لو","سمحت","فضلك","ممكن","اليوم","i","have","remind","me","please","need","a","an","on","at"]);
+function parseReminder(text,nowMs){
+  const now=nowMs||Date.now();
+  const o=cleanOrig(text);const T=tokenize(o);
+  const offs=findOffsets(T);
+  const dayOff=findDay(T,new Date(now));
+  /* relative time: "بعد ساعتين" / "in 2 hours" */
+  let rel=null;
+  for(let i=0;i<T.length&&rel===null;i++){
+    if(T[i].used)continue;const w=T[i].w;
+    if(w==="بعد"||w==="in"){
+      const d=parseDurAt(T,i+1);
+      if(d&&d.mins>0){
+        rel=d.mins;for(let k=i;k<i+1+d.len;k++)T[k].used=true;
+        let p=i+1+d.len;
+        if(T[p]&&T[p].w==="من"&&T[p+1]&&["الحين","الان","هسه"].includes(T[p+1].w)){T[p].used=T[p+1].used=true}
+        else if(T[p]&&["الحين","الان"].includes(T[p].w))T[p].used=true;
+      }
+    }
+  }
+  const tm=rel!==null?{hr:null,mn:0,period:null}:findTime(T);
+  let eventAt=null;
+  if(rel!==null){eventAt=Math.ceil((now+rel*60000)/60000)*60000}
+  else if(tm.hr!==null)eventAt=resolveTime(tm.hr,tm.mn,tm.period,now,dayOff);
+  else if(dayOff!==null){const d=new Date(now);d.setHours(0,0,0,0);d.setDate(d.getDate()+dayOff);d.setHours(9,0,0,0);eventAt=d.getTime()}
+  let words=T.filter(t=>!t.used&&t.w).map(t=>t.o.replace(/^[،,؛;:!؟?."'()]+|[،,؛;:!؟?."'()]+$/g,""));
+  let kept=words.filter(w=>!STOP.has(normChars(w)));
+  if(kept.length>1)kept=kept.filter(w=>normChars(w)!=="موعد"||false);
+  else if(kept.length===1&&normChars(kept[0])==="موعد")kept=["موعد"];
+  while(kept.length>1&&["to","about","that"].includes(normChars(kept[0])))kept.shift();
+  const title=kept.join(" ").trim();
+  return {title,eventAt,hasTime:tm.hr!==null||rel!==null,offsets:offs};
+}
+
+const HIGHW=new Set(["ضروري","ضروريه","ضروره","عاجل","مهم","مهمه","اهم","لازم","urgent","important","asap"]);
+const LOWRE=/(?:اذا|لو|ان)\s*(?:فضيت|فضيتي|قدرت|بقي|بقى|كان\s*في\s*وقت|في\s*وقت|لقيت\s*وقت)|مو\s*مهم|غير\s*مهم|if\s*i\s*have\s*time|if\s*possible|optional|low\s*priority|لو\s*فيه\s*وقت/;
+function splitTasks(text){
+  return text.split(/\n|[،,؛;]+|\s+ثم\s+|\s+وبعدين\s+|\s+وبعدها\s+|\s+then\s+/i)
+    .map(s=>s.replace(/^(?:[\s\-•*]+|\d+[.)]\s*)+/,"").trim()).filter(Boolean);
+}
+function parseTaskLine(line){
+  let o=cleanOrig(line);let imp=1;
+  const n=normChars(o);const m=n.match(LOWRE);
+  if(m){imp=0;o=(o.slice(0,m.index)+" "+o.slice(m.index+m[0].length)).replace(/\s+/g," ").trim()}
+  const T=tokenize(o);let mins=30,found=false;
+  for(let i=0;i<T.length&&!found;i++){
+    if(T[i].used||T[i].w==="الساعه")continue;
+    const d=parseDurAt(T,i);
+    if(d&&(d.mins>=5||d.len>1)){mins=Math.min(480,Math.max(5,d.mins));for(let k=i;k<i+d.len;k++)T[k].used=true;found=true}
+  }
+  for(const t of T){if(!t.used&&HIGHW.has(t.w)){if(imp!==0)imp=2;t.used=true}}
+  let words=T.filter(t=>!t.used&&t.w).map(t=>t.o.replace(/^[،,؛;:!؟?."'()]+|[،,؛;:!؟?."'()]+$/g,""));
+  let kept=words.filter(w=>!["عندي","اليوم","ابي","ابغى","ابغي","i","need","to"].includes(normChars(w)));
+  if(!kept.length)kept=words;
+  return {title:kept.join(" ").trim(),mins,imp};
+}
+
+/* =====================================================================
+   TOASTS / SOUND / NOTIFICATIONS
+   ===================================================================== */
 function toast(msg,opt={}){
   const d=document.createElement("div");d.className="toast"+(opt.alert?" alert":"");
   const sp=document.createElement("span");sp.textContent=msg;d.appendChild(sp);
   if(opt.label){const b=document.createElement("button");b.textContent=opt.label;b.onclick=()=>{opt.fn&&opt.fn();d.remove()};d.appendChild(b)}
-  $("toasts").appendChild(d);setTimeout(()=>d.remove(),opt.ms||(opt.alert?9000:4000));
+  $("toasts").appendChild(d);setTimeout(()=>d.remove(),opt.ms||(opt.alert?12000:4000));
 }
-/* ---------- sound / alerts ---------- */
 let ac=null;
 function unlockAudio(){try{ac=ac||new (window.AudioContext||window.webkitAudioContext)();if(ac.state==="suspended")ac.resume()}catch(_){}}
-document.addEventListener("pointerdown",unlockAudio,{once:true});
+document.addEventListener("pointerdown",unlockAudio);
 function beep(){
-  try{unlockAudio();if(!ac)return;[0,.25,.5].forEach(t=>{const o=ac.createOscillator(),g=ac.createGain();o.frequency.value=880;o.connect(g);g.connect(ac.destination);
-    g.gain.setValueAtTime(.0001,ac.currentTime+t);g.gain.exponentialRampToValueAtTime(.3,ac.currentTime+t+.02);g.gain.exponentialRampToValueAtTime(.0001,ac.currentTime+t+.2);o.start(ac.currentTime+t);o.stop(ac.currentTime+t+.22)})}catch(_){}
+  try{unlockAudio();if(!ac)return;[0,.3,.6].forEach(t=>{const o=ac.createOscillator(),g=ac.createGain();o.frequency.value=880;o.connect(g);g.connect(ac.destination);
+    g.gain.setValueAtTime(.0001,ac.currentTime+t);g.gain.exponentialRampToValueAtTime(.35,ac.currentTime+t+.02);g.gain.exponentialRampToValueAtTime(.0001,ac.currentTime+t+.22);o.start(ac.currentTime+t);o.stop(ac.currentTime+t+.25)})}catch(_){}
 }
-function notifySupported(){return typeof Notification!=="undefined"}
+const notifySupported=()=>typeof Notification!=="undefined";
 function alertUser(title,body){
-  toast(title+(body?" "+body:""),{alert:true});beep();
-  try{navigator.vibrate&&navigator.vibrate([200,100,200])}catch(_){}
+  toast(title+(body?" — "+body:""),{alert:true});beep();
+  try{navigator.vibrate&&navigator.vibrate([250,120,250,120,250])}catch(_){}
   if(S.notif&&notifySupported()&&Notification.permission==="granted"){
-    const opts={body:body||"",icon:"icon.svg",tag:"time-"+Date.now(),dir:document.dir};
-    if(navigator.serviceWorker&&navigator.serviceWorker.ready){navigator.serviceWorker.ready.then(r=>r.showNotification(title,opts)).catch(()=>{try{new Notification(title,opts)}catch(_){}})}
-    else{try{new Notification(title,opts)}catch(_){}}
+    const opts={body:body||"",icon:"icon.svg",tag:"time-"+Date.now(),requireInteraction:true};
+    if(navigator.serviceWorker&&navigator.serviceWorker.ready){
+      navigator.serviceWorker.ready.then(r=>r.showNotification(title,opts)).catch(()=>{try{new Notification(title,opts)}catch(_){}});
+    }else{try{new Notification(title,opts)}catch(_){}}
   }
 }
 async function askNotif(){
   if(!notifySupported()){toast(T("notifNA"));return}
-  try{const p=await Notification.requestPermission();
-    if(p==="granted"){S.notif=true;save();toast(T("notifTestOk"))}
-  }catch(_){}
+  try{const p=await Notification.requestPermission();if(p==="granted"){S.notif=true;save();toast(T("notifTestOk"))}}catch(_){}
   renderAll();
 }
 
-/* ---------- planning ---------- */
-function plan(){
-  const u=S.tasks.map((x,i)=>({...x,i})).filter(x=>!x.done).sort((a,b)=>(b.star-a.star)||(a.i-b.i));
-  const ceil5=Math.ceil(nowMin()/5)*5;
-  let cur=Math.max(toMin(S.start),ceil5);const end=toMin(S.end);const over=[];
-  u.forEach(x=>{x.s=cur;x.e=cur+x.mins;if(x.e>end)over.push(x.title);cur=x.e+Number(S.brk||0)});
-  return{u,over};
+/* =====================================================================
+   MODE A : reminders
+   ===================================================================== */
+let dA=null; /* draft */
+const BASE_OFFS=[0,10,15,30,60,120,1440];
+
+function openFormA(p){
+  const now=Date.now();
+  const ev=p&&p.eventAt?p.eventAt:null;
+  dA={title:p?p.title:"",
+      date:ev?dateStr(new Date(ev)):dateStr(new Date()),
+      time:ev?timeStr(new Date(ev)):"",
+      offs:p&&p.offsets&&p.offsets.length?p.offsets.slice():[0]};
+  $("aForm").hidden=false;
+  renderFormA();
+  $("aForm").scrollIntoView({behavior:"smooth",block:"start"});
 }
-/* ---------- timer ---------- */
+function evFromDraft(){
+  if(!dA||!dA.date||!dA.time)return null;
+  const[y,m,d]=dA.date.split("-").map(Number);const[h,mi]=dA.time.split(":").map(Number);
+  const t=new Date(y,m-1,d,h,mi,0,0).getTime();return isNaN(t)?null:t;
+}
+function renderFormA(){
+  if(!dA)return;
+  $("aTitle").value=dA.title;$("aDate").value=dA.date;$("aTime").value=dA.time;
+  const days=[[0,T("today")],[1,T("tomorrow")],[2,S.lang==="ar"?T("after"):"+2"]];
+  const base=new Date();base.setHours(0,0,0,0);
+  $("aDays").innerHTML=days.map(([o,l])=>{const d=new Date(base);d.setDate(d.getDate()+o);return `<button type="button" class="chip ${dateStr(d)===dA.date?"on":""}" data-d="${dateStr(d)}">${l}</button>`}).join("");
+  $("aDays").querySelectorAll(".chip").forEach(c=>c.onclick=()=>{dA.date=c.dataset.d;renderFormA()});
+  const all=[...new Set([...BASE_OFFS,...dA.offs])].sort((a,b)=>a-b);
+  $("aOffs").innerHTML=all.map(m=>`<button type="button" class="chip ${dA.offs.includes(m)?"on":""}" data-m="${m}">${offLabel(m)}</button>`).join("");
+  $("aOffs").querySelectorAll(".chip").forEach(c=>c.onclick=()=>{
+    const m=Number(c.dataset.m);const i=dA.offs.indexOf(m);if(i>=0)dA.offs.splice(i,1);else dA.offs.push(m);renderFormA();
+  });
+  renderSumA();
+}
+function renderSumA(){
+  const ev=evFromDraft();const now=Date.now();const w=[];
+  let html="";
+  if(!dA.title.trim())w.push(T("needTitle"));
+  if(!dA.time)w.push(T("needTime"));
+  if(ev){
+    if(ev<=now)w.push(T("evPast"));
+    const offs=dA.offs.slice().sort((a,b)=>b-a);
+    html=`<div><b>${T("sumH")}</b></div>`;
+    if(!offs.length)html+=`<div>—</div>`;
+    offs.forEach(m=>{
+      const at=ev-m*60000;const past=at<=now;
+      html+=`<div class="${past?"past":""}">🔔 ${dayLabel(at)} <bdi>${fmtT(at)}</bdi> · ${offLabel(m)}${past?" ("+T("pastTag")+")":""}</div>`;
+    });
+    html+=`<div style="margin-top:6px;color:var(--mut)">📌 ${dayLabel(ev)} <bdi>${fmtT(ev)}</bdi></div>`;
+  }
+  $("aSum").innerHTML=html;$("aSum").hidden=!html;
+  $("aWarn").textContent=w.join(" ");
+  $("aSave").disabled=w.length>0;$("aSave").style.opacity=w.length?.5:1;
+}
+function saveA(){
+  const ev=evFromDraft();if(!ev||!dA.title.trim()||ev<=Date.now())return;
+  const now=Date.now();
+  let alerts=[...new Set(dA.offs)].map(m=>({min:m,at:ev-m*60000,fired:false})).filter(a=>a.at>now);
+  if(!alerts.length)alerts=[{min:0,at:ev,fired:false}];
+  alerts.sort((a,b)=>a.at-b.at);
+  S.reminders.push({id:uid(),title:dA.title.trim(),eventAt:ev,alerts});
+  save();
+  const first=alerts[0];
+  toast(`${T("saved")} · 🔔 ${dayLabel(first.at)} ${fmtT(first.at)}`);
+  dA=null;$("aForm").hidden=true;$("aText").value="";
+  if(notifySupported()&&Notification.permission==="default")askNotif();
+  renderAll();
+}
+function parseA(){
+  const tx=$("aText").value.trim();
+  if(!tx){toast(T("nothingHeard"));return}
+  openFormA(parseReminder(tx));
+}
+function reminderRow(r,past){
+  const al=r.alerts.map(a=>`<span class="${a.fired?"":""}">${a.fired?"✓":"🔔"} <bdi>${fmtT(a.at)}</bdi></span>`).join(" · ");
+  return `<div class="row" data-id="${r.id}"><div class="tt"><b>${esc(r.title)}</b>
+    <small>📌 ${dayLabel(r.eventAt)} <bdi>${fmtT(r.eventAt)}</bdi></small><small>${al}</small></div>
+    <button class="x" aria-label="delete">✕</button></div>`;
+}
+function renderListsA(){
+  const now=Date.now();
+  const up=S.reminders.filter(r=>r.alerts.some(a=>!a.fired)||r.eventAt>now).sort((a,b)=>a.eventAt-b.eventAt);
+  const pastL=S.reminders.filter(r=>!up.includes(r)).sort((a,b)=>b.eventAt-a.eventAt);
+  $("aList").innerHTML=up.length?up.map(r=>reminderRow(r)).join(""):`<div class="note">${T("aNone")}</div>`;
+  $("aPastSum").textContent=`${T("aPastS")} (${pastL.length})`;
+  $("aPast").innerHTML=pastL.length?pastL.map(r=>reminderRow(r,true)).join("")+`<div class="btnrow"><button class="ghost" id="aClearPast">${T("clearPast")}</button></div>`:`<div class="note">${T("aPastNone")}</div>`;
+  const bind=box=>box.querySelectorAll(".row").forEach(row=>{
+    row.querySelector(".x").onclick=()=>{
+      const i=S.reminders.findIndex(x=>x.id===row.dataset.id);if(i<0)return;
+      const[rm]=S.reminders.splice(i,1);save();renderAll();
+      toast(T("deleted"),{label:T("undo"),fn:()=>{S.reminders.splice(i,0,rm);save();renderAll()}});
+    };
+  });
+  bind($("aList"));bind($("aPast"));
+  const cp=$("aClearPast");if(cp)cp.onclick=()=>{S.reminders=S.reminders.filter(r=>up.includes(r));save();renderAll()};
+}
+
+/* =====================================================================
+   MODE B : auto plan
+   ===================================================================== */
+function replan(){
+  const u=S.tasks.map((t,i)=>({t,i})).filter(x=>!x.t.done).sort((a,b)=>(b.t.imp-a.t.imp)||(a.i-b.i));
+  const now=Date.now();
+  const ceil5=Math.ceil(now/300000)*300000;
+  let startMs=atTime(now,S.start,0);const endMs=atTime(now,S.end,0);
+  let cur,endUse=endMs;
+  if(now>=endMs){cur=atTime(now,S.start,1);endUse=atTime(now,S.end,1)}
+  else cur=Math.max(startMs,ceil5);
+  const over=[];
+  u.forEach(({t})=>{
+    t.startAt=cur;t.fired=false;cur+=t.mins*60000;if(cur>endUse)over.push(t.title);cur+=(Number(S.brk)||0)*60000;
+  });
+  S.over=over;save();
+}
+function planned(){return S.tasks.filter(t=>!t.done).sort((a,b)=>(a.startAt||0)-(b.startAt||0))}
+function parseB(){
+  const tx=$("bText").value.trim();
+  if(!tx){toast(T("nothingHeard"));return}
+  const lines=splitTasks(tx);let n=0;
+  lines.forEach(l=>{const p=parseTaskLine(l);if(p.title){S.tasks.push({id:uid(),title:p.title,mins:p.mins,imp:p.imp,done:false});n++}});
+  replan();$("bText").value="";renderAll();
+  toast(T("planned").replace("{n}",n));
+  if(notifySupported()&&Notification.permission==="default")askNotif();
+}
+const IMPI=["🟢","🟡","🔴"];
+function rowB(t,done){
+  return `<div class="row ${done?"done":""}" data-id="${t.id}"><input type="checkbox" ${done?"checked":""} aria-label="done">
+    <div class="tt"><b>${esc(t.title)}</b><small>${t.mins} ${T("mins")}</small></div>
+    ${done?"":`<button class="pill" data-a="imp">${IMPI[t.imp]} ${T("imp"+t.imp)}</button><div class="tm"><bdi>${fmtT(t.startAt)}</bdi></div>`}
+    <button class="x" aria-label="delete">✕</button></div>`;
+}
 function tLeft(){const t=S.timer;if(!t)return 0;return t.endAt?Math.max(0,Math.round((t.endAt-Date.now())/1000)):t.left}
-const clockTxt=s=>String(Math.floor(s/60)).padStart(2,"0")+":"+String(s%60).padStart(2,"0");
+const clockTxt=s=>pad(Math.floor(s/60))+":"+pad(s%60);
 function startTimer(task){
   unlockAudio();
-  if(S.timer&&S.timer.id===task.id){S.timer={id:task.id,endAt:Date.now()+S.timer.left*1000}}
+  if(S.timer&&S.timer.id===task.id)S.timer={id:task.id,endAt:Date.now()+S.timer.left*1000};
   else S.timer={id:task.id,endAt:Date.now()+task.mins*60000};
   save();renderHero();
 }
 function pauseTimer(){if(!S.timer||!S.timer.endAt)return;S.timer={id:S.timer.id,left:tLeft()};save();renderHero()}
-function completeTask(id,silent){
+function completeTask(id){
   const t=S.tasks.find(x=>x.id===id);if(!t)return;
-  const wasTimer=S.timer&&S.timer.id===id?S.timer:null;
-  t.done=true;t.doneAt=Date.now();if(wasTimer)S.timer=null;save();renderAll();
-  if(!silent)toast(T("nice"),{label:T("undo"),fn:()=>{t.done=false;delete t.doneAt;save();renderAll()}});
+  t.done=true;if(S.timer&&S.timer.id===id)S.timer=null;save();renderAll();
+  toast(T("nice"),{label:T("undo"),fn:()=>{t.done=false;replan();renderAll()}});
 }
-/* ---------- render ---------- */
 function renderHero(){
-  const h=$("hero");const{u}=plan();const t=u[0];
+  const h=$("hero");const t=planned()[0];
   if(!t){h.className="card hero empty-h";h.innerHTML=`<div class="big">${T("noTasks")}</div><div class="sub">${T("noTasksSub")}</div>`;return}
   h.className="card hero";
   const run=S.timer&&S.timer.id===t.id;const running=run&&S.timer.endAt;
-  let acts="";
-  if(running)acts=`<button class="go" data-a="pause">${T("pause")}</button>`;
-  else if(run)acts=`<button class="go" data-a="go">${T("resume")}</button>`;
-  else acts=`<button class="go" data-a="go">${T("go")}</button>`;
+  let acts=running?`<button class="go" data-a="pause">${T("pause")}</button>`:(run?`<button class="go" data-a="go">${T("resume")}</button>`:`<button class="go" data-a="go">${T("go")}</button>`);
   acts+=`<button class="ok" data-a="fin">${T("finish")}</button>`;
-  h.innerHTML=`<div class="lbl">${T("now")}${t.star?" ⭐":""}</div><div class="big">${esc(t.title)}</div>
-    <div class="sub">${t.mins} ${T("mins")} · ${fmt(t.s)} - ${fmt(t.e)}${t.remind?" · ⏰ "+t.remind:""}</div>
-    ${run?`<div class="clock" id="clock">${clockTxt(tLeft())}</div>`:""}
-    <div class="acts">${acts}</div>`;
+  h.innerHTML=`<div class="lbl">${T("now")} ${IMPI[t.imp]}</div><div class="big">${esc(t.title)}</div>
+    <div class="sub">${t.mins} ${T("mins")} · <bdi>${fmtT(t.startAt)}</bdi></div>
+    ${run?`<div class="clock" id="clock">${clockTxt(tLeft())}</div>`:""}<div class="acts">${acts}</div>`;
   h.querySelectorAll("[data-a]").forEach(b=>b.onclick=()=>{const a=b.dataset.a;if(a==="go")startTimer(t);else if(a==="pause")pauseTimer();else completeTask(t.id)});
 }
-function rowHtml(x,showTime){
-  return `<div class="row ${x.done?"done":""}" data-id="${x.id}"><input type="checkbox" ${x.done?"checked":""} aria-label="done">
-  <div class="tt"><b>${x.star?'<span class="star">⭐</span> ':""}${esc(x.title)}</b><small>${x.mins} ${T("mins")}${x.remind?" · ⏰ "+x.remind:""}</small></div>
-  ${showTime?`<div class="tm">${fmt(x.s)}</div>`:""}<button class="x" aria-label="delete">✕</button></div>`;
-}
-function bindRows(box){
-  box.querySelectorAll(".row").forEach(r=>{
-    const id=r.dataset.id;
-    r.querySelector("input").onchange=e=>{
+function renderListsB(){
+  const p=planned();const rest=p.slice(1);
+  $("bList").innerHTML=p.length?p.map(t=>rowB(t,false)).join(""):`<div class="note">${T("bNone")}</div>`;
+  const d=S.tasks.filter(t=>t.done);
+  $("bDoneSum").textContent=`${T("bDoneS")} (${d.length})`;
+  $("bDone").innerHTML=d.length?d.map(t=>rowB(t,true)).join(""):`<div class="note">${T("bDoneNone")}</div>`;
+  $("bOver").textContent=S.over&&S.over.length?T("overflow")+S.over.join("، "):"";
+  [$("bList"),$("bDone")].forEach(box=>box.querySelectorAll(".row").forEach(row=>{
+    const id=row.dataset.id;
+    row.querySelector("input").onchange=e=>{
       if(e.target.checked)completeTask(id);
-      else{const t=S.tasks.find(x=>x.id===id);if(t){t.done=false;save();renderAll()}}
+      else{const t=S.tasks.find(x=>x.id===id);if(t){t.done=false;replan();renderAll()}}
     };
-    r.querySelector(".x").onclick=()=>{
+    row.querySelector(".x").onclick=()=>{
       const i=S.tasks.findIndex(x=>x.id===id);if(i<0)return;const[rm]=S.tasks.splice(i,1);
-      if(S.timer&&S.timer.id===id)S.timer=null;save();renderAll();
-      toast(T("deleted"),{label:T("undo"),fn:()=>{S.tasks.splice(i,0,rm);save();renderAll()}});
+      if(S.timer&&S.timer.id===id)S.timer=null;replan();renderAll();
+      toast(T("deleted"),{label:T("undo"),fn:()=>{S.tasks.splice(i,0,rm);replan();renderAll()}});
     };
-  });
+    const pill=row.querySelector('[data-a="imp"]');
+    if(pill)pill.onclick=()=>{const t=S.tasks.find(x=>x.id===id);t.imp=(t.imp+1)%3;replan();renderAll()};
+  }));
 }
-function renderLists(){
-  const{u,over}=plan();const rest=u.slice(1);
-  $("list").innerHTML=rest.length?rest.map(x=>rowHtml(x,true)).join(""):`<div class="note">${T("emptyList")}</div>`;
-  bindRows($("list"));
-  $("over").textContent=over.length?T("overflow")+over.join("، "):"";
-  const d=S.tasks.filter(x=>x.done);
-  $("doneSum").textContent=`${T("done")} (${d.length})`;
-  $("doneList").innerHTML=d.length?d.map(x=>rowHtml(x,false)).join(""):`<div class="note">${T("doneNone")}</div>`;
-  bindRows($("doneList"));
-}
+
+/* =====================================================================
+   RENDER / EVENTS
+   ===================================================================== */
 function renderBanner(){
   const b=$("banner");
-  if(S.bannerOff||!notifySupported()||Notification.permission!=="default"){b.innerHTML="";return}
+  if(!notifySupported()||Notification.permission!=="default"){b.innerHTML="";return}
   b.innerHTML=`<div class="banner"><span>${T("banner")}</span><button id="bnOn">${T("bannerBtn")}</button></div>`;
   $("bnOn").onclick=askNotif;
 }
 function renderStatic(){
-  document.documentElement.lang=S.lang;document.documentElement.dir=S.lang==="ar"?"rtl":"ltr";
-  document.documentElement.dataset.theme=S.theme;
-  $("appName").textContent=T("app");document.title=S.lang==="ar"?"وقتي | مخطط يومي مجاني":"Time | Free Daily Planner";
+  const ar=S.lang==="ar";
+  document.documentElement.lang=S.lang;document.documentElement.dir=ar?"rtl":"ltr";document.documentElement.dataset.theme=S.theme;
+  $("appName").textContent=T("app");document.title=ar?"وقتي | تنبيهات وترتيب يومك":"Time | Reminders & Day Planner";
   $("bLang").textContent=T("lang");$("bTheme").textContent=S.theme==="dark"?"☀️":"🌙";
-  $("title").placeholder=T("title_ph");$("hAdd").textContent=T("hAdd");$("bAdd").textContent=T("bAdd");
-  $("bStar").title=T("star");$("bStar").textContent=draft.star?"⭐":"☆";$("bStar").classList.toggle("on",draft.star);
-  $("bRemind").textContent=T("remindBtn");$("remindLbl").textContent=T("remindLbl");
-  $("hNext").textContent=T("hNext");$("hSet").textContent=T("hSet");
-  $("lStart").textContent=T("lStart");$("lEnd").textContent=T("lEnd");$("lBrk").textContent=T("lBrk");
-  $("bClear").textContent=T("clearDone");$("bReset").textContent=T("reset");$("hintInstall").textContent=T("hintInstall");$("foot").textContent=T("foot");
-  $("chips").innerHTML=[15,30,45,60,90].map(m=>`<button type="button" class="chip ${draft.mins===m?"on":""}" data-m="${m}">${m} ${T("mins")}</button>`).join("");
-  $("chips").querySelectorAll(".chip").forEach(c=>c.onclick=()=>{draft.mins=Number(c.dataset.m);renderStatic()});
-  let nt;
-  if(!notifySupported())nt=T("notifNA");else if(Notification.permission==="granted")nt=T("notifOn");else if(Notification.permission==="denied")nt=T("notifBlocked");else nt=T("notifOff");
+  $("segA").innerHTML=`${T("segA")}<small>${T("segAs")}</small>`;$("segB").innerHTML=`${T("segB")}<small>${T("segBs")}</small>`;
+  $("segA").classList.toggle("on",S.mode==="A");$("segB").classList.toggle("on",S.mode==="B");
+  $("modeDesc").textContent=S.mode==="A"?T("descA"):T("descB");
+  $("secA").hidden=S.mode!=="A";$("secB").hidden=S.mode!=="B";
+  $("aH").textContent=T("aH");$("aText").placeholder=T("aPh");$("aParse").textContent=T("aParse");$("aEx").textContent=T("aEx");
+  $("aFormH").textContent=T("aFormH");$("lTitle").textContent=T("lTitle");$("lDay").textContent=T("lDay");$("lTime").textContent=T("lTime");$("lOffs").textContent=T("lOffs");
+  $("aSave").textContent=T("save");$("aCancel").textContent=T("cancel");$("aListH").textContent=T("aListH");
+  $("bH").textContent=T("bH");$("bText").placeholder=T("bPh");$("bGo").textContent=T("bGo");$("bEx").textContent=T("bEx");$("bPlanH").textContent=T("bPlanH");$("bRe").textContent=T("bRe");
+  $("hSet").textContent=T("hSet");$("lStart").textContent=T("lStart");$("lEnd").textContent=T("lEnd");$("lBrk").textContent=T("lBrk");
+  $("bTest").textContent=T("test");$("bWipe").textContent=T("wipe");$("hintInstall").textContent=T("hintInstall");$("foot").textContent=T("foot");
+  let nt;if(!notifySupported())nt=T("notifNA");else if(Notification.permission==="granted")nt=S.notif?T("notifOn"):T("notifOff");else if(Notification.permission==="denied")nt=T("notifBlocked");else nt=T("notifOff");
   $("bNotif").textContent=nt;
+  if(dA)renderFormA();
 }
-function renderAll(){renderStatic();renderBanner();renderHero();renderLists()}
+function renderAll(){renderStatic();renderBanner();renderListsA();renderHero();renderListsB()}
 
-/* ---------- events ---------- */
-$("form").onsubmit=e=>{
-  e.preventDefault();const title=$("title").value.trim();if(!title)return;
-  const t={id:uid(),title,mins:draft.mins,star:draft.star,remind:$("remindRow").classList.contains("show")?$("remind").value:"",done:false};
-  S.tasks.push(t);save();
-  $("title").value="";draft.star=false;$("remind").value="";$("remindRow").classList.remove("show");
-  renderAll();
-  const p=plan().u.find(x=>x.id===t.id);
-  toast(T("added")+(p?` · ${T("startsAt")} ${fmt(p.s)}`:""));
-  $("title").focus();
-};
-$("bStar").onclick=()=>{draft.star=!draft.star;renderStatic()};
-$("bRemind").onclick=()=>{$("remindRow").classList.toggle("show");if($("remindRow").classList.contains("show")){$("remind").focus();if(!$("remind").value){const d=new Date(Date.now()+3600000);$("remind").value=fmt(d.getHours()*60+d.getMinutes())}}};
+$("seg").querySelectorAll("button").forEach(b=>b.onclick=()=>{S.mode=b.dataset.m;save();renderAll()});
+$("aParse").onclick=parseA;
+$("aCancel").onclick=()=>{dA=null;$("aForm").hidden=true};
+$("aSave").onclick=saveA;
+$("aTitle").oninput=e=>{dA.title=e.target.value;renderSumA()};
+$("aDate").onchange=e=>{dA.date=e.target.value;renderFormA()};
+$("aTime").onchange=e=>{dA.time=e.target.value;renderSumA()};
+$("aTime").oninput=e=>{dA.time=e.target.value;renderSumA()};
+$("bGo").onclick=parseB;
+$("bRe").onclick=()=>{replan();renderAll()};
 $("bLang").onclick=()=>{S.lang=S.lang==="ar"?"en":"ar";save();renderAll()};
 $("bTheme").onclick=()=>{S.theme=S.theme==="dark"?"light":"dark";save();renderStatic()};
-$("bSet").onclick=()=>$("set").classList.toggle("show");
-["start","end","brk"].forEach(k=>{$(k).value=S[k];$(k).onchange=()=>{S[k]=k==="brk"?Math.max(0,Number($(k).value)||0):($(k).value||S[k]);save();renderAll()}});
+$("bSet").onclick=()=>{$("set").hidden=!$("set").hidden};
+["start","end","brk"].forEach(k=>{$(k).value=S[k];$(k).onchange=()=>{S[k]=k==="brk"?Math.max(0,Number($(k).value)||0):($(k).value||S[k]);save();replan();renderAll()}});
 $("bNotif").onclick=()=>{
   if(!notifySupported()){toast(T("notifNA"));return}
   if(Notification.permission==="denied"){toast(T("notifBlocked"));return}
-  if(Notification.permission==="granted"){S.notif=!S.notif;save();toast(S.notif?T("notifOn"):T("notifBlocked").replace("🔕 ","🔕 "));renderStatic();return}
+  if(Notification.permission==="granted"){S.notif=!S.notif;save();renderStatic();return}
   askNotif();
 };
-$("bClear").onclick=()=>{S.tasks=S.tasks.filter(x=>!x.done);save();renderAll();toast(T("cleared"))};
-$("bReset").onclick=()=>{const bak=S.tasks.slice(),bt=S.timer;S.tasks=[];S.timer=null;save();renderAll();toast(T("resetDone"),{label:T("undo"),fn:()=>{S.tasks=bak;S.timer=bt;save();renderAll()}})};
+$("bTest").onclick=()=>alertUser(T("alertTitle")+T("fallbackTitle"),T("itsNow"));
+let wipeArm=false;
+$("bWipe").onclick=()=>{
+  if(!wipeArm){wipeArm=true;toast(T("wipeAsk"));setTimeout(()=>wipeArm=false,4000);return}
+  S.reminders=[];S.tasks=[];S.timer=null;S.over=[];save();wipeArm=false;renderAll();toast(T("wiped"));
+};
 
 /* ---------- voice ---------- */
-let rec=null;
-$("bVoice").onclick=async()=>{
+let rec=null,recBtn=null;
+async function voice(btn,o){
   const R=window.SpeechRecognition||window.webkitSpeechRecognition;
   if(!R){toast(T("novoice"),{ms:8000});return}
   if(rec){try{rec.stop()}catch(_){}return}
   try{if(navigator.mediaDevices&&navigator.mediaDevices.getUserMedia){const st=await navigator.mediaDevices.getUserMedia({audio:true});st.getTracks().forEach(x=>x.stop())}}
   catch(_){toast(T("micDenied"),{ms:7000});return}
   const langs=S.lang==="ar"?["ar-SA","ar-KW","ar"]:["en-US"];let ti=0;
+  const base=o.base?o.base():"";
   const go=()=>{
-    const r=new R();rec=r;r.lang=langs[ti];r.interimResults=true;r.continuous=false;
-    r.onstart=()=>{toast(T("listening"),{ms:2500});$("bVoice").textContent="⏹"};
-    r.onresult=e=>{let tx="";for(let i=0;i<e.results.length;i++)tx+=e.results[i][0].transcript;$("title").value=tx};
+    const r=new R();rec=r;recBtn=btn;r.lang=langs[ti];r.interimResults=true;r.continuous=!!o.cont;
+    r.onstart=()=>{toast(T("listening"),{ms:2500});btn.classList.add("rec");btn.textContent="⏹"};
+    r.onresult=e=>{
+      const parts=[];for(let i=0;i<e.results.length;i++){const tx=e.results[i][0].transcript.trim();if(tx)parts.push(tx)}
+      o.set(parts,base);
+    };
     r.onerror=e=>{
       if(e.error==="language-not-supported"&&ti<langs.length-1){ti++;rec=null;go();return}
       if(e.error==="not-allowed"||e.error==="service-not-allowed")toast(T("micDenied"),{ms:7000});
       else if(e.error==="no-speech")toast(T("noSpeech"));else if(e.error==="network")toast(T("micNet"));else toast(T("micErr"));
     };
-    r.onend=()=>{rec=null;$("bVoice").textContent="🎤"};
+    r.onend=()=>{rec=null;btn.classList.remove("rec");btn.textContent="🎤";o.end&&o.end()};
     try{r.start()}catch(_){rec=null;toast(T("micErr"))}
   };go();
-};
+}
+$("aMic").onclick=()=>voice($("aMic"),{set:p=>{$("aText").value=p.join(" ")},end:()=>{if($("aText").value.trim())parseA()}});
+$("bMic").onclick=()=>voice($("bMic"),{cont:true,base:()=>$("bText").value.trim(),set:(p,b)=>{$("bText").value=(b?b+"\n":"")+p.join("\n")}});
 
-/* ---------- ticker: timer + reminders ---------- */
-let lastMin=-1;
+/* ---------- ticker: timer + alerts ---------- */
 setInterval(()=>{
+  const now=Date.now();
   const c=$("clock");
   if(S.timer){
     if(c)c.textContent=clockTxt(tLeft());
@@ -384,20 +840,28 @@ setInterval(()=>{
       renderHero();
     }
   }
-  const nm=nowMin();
-  if(nm!==lastMin){
-    lastMin=nm;
-    S.tasks.forEach(t=>{
-      if(!t.done&&t.remind&&t.n!==todayStr()){
-        const rm=toMin(t.remind);
-        if(nm>=rm&&nm<rm+30){t.n=todayStr();save();alertUser(T("itsTime")+t.title,"")}
+  let changed=false;
+  S.reminders.forEach(r=>r.alerts.forEach(a=>{
+    if(!a.fired&&now>=a.at){
+      a.fired=true;changed=true;
+      if(now-a.at<6*3600000||r.eventAt>now){
+        const body=a.min===0?T("itsNow"):T("remainOf").replace("{x}",offLabel(a.min))+" ("+fmtT(r.eventAt)+")";
+        alertUser(T("alertTitle")+r.title,body);
       }
-    });
-    renderHero();renderLists();
-  }
+    }
+  }));
+  S.tasks.forEach(t=>{
+    if(!t.done&&t.startAt&&!t.fired&&now>=t.startAt){
+      t.fired=true;changed=true;
+      if(now-t.startAt<3*3600000)alertUser(T("startNow")+t.title,"");
+    }
+  });
+  if(changed){save();renderListsA();renderHero();renderListsB()}
 },1000);
+setInterval(()=>{renderHero();renderListsA()},60000);
 
 if("serviceWorker"in navigator&&location.protocol.startsWith("http")){navigator.serviceWorker.register("sw.js").catch(()=>{})}
+if(S.tasks.some(t=>!t.done&&!t.startAt))replan();
 renderAll();
 </script>
 </body>
